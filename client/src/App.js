@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { Routes, Route} from "react-router-dom"
 import WeeklyPlans from "./components/WeeklyPlans/WeeklyPlans.js";
 import Account from "./components/Account/account";
@@ -31,10 +31,11 @@ palette:{
 
 const App = () =>{
     const dispatch  = useDispatch(); 
+    const [currentId, setCurrentId] = useState(null);
 
     useEffect(() => {
         dispatch(getWeeklyPlans())
-    }, [dispatch])
+    }, [currentId, dispatch])
     return (
         <ThemeProvider theme={theme}>
             <Router>
@@ -42,10 +43,10 @@ const App = () =>{
             <Routes>
                 <Route path="/" exact element={<Login/>} />
                 <Route path="/overview"  element={<Overview/>}/>
-                <Route path="/weeklyPlans" element={<WeeklyPlans/>}/>
+                <Route path="/weeklyPlans" element={<WeeklyPlans setCurrentId={setCurrentId} />}/>
                 <Route path="/settings"  element={<Settings/>}/>
                 <Route path="/account"  element={<Account/>}/>
-                <Route path="/createPlan" element={<Form />}/>
+                <Route path="/createPlan" element={<Form currentId={currentId}  setCurrentId={setCurrentId}/>}/>
             </Routes>
             </Layout>
             </Router>

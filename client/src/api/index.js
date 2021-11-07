@@ -4,4 +4,6 @@ const url = 'http://localhost:5000/weeklyPlans';
 
 export const fetchWeeklyPlans = () => axios.get(url)
 
-export const createPost = (newPost) => axios.post(url, newPost)
+export const createWeeklyPlan = (newWeeklyPlan) => axios.post(url, newWeeklyPlan)
+
+export const updateWeeklyPlans = (id, updatedWeeklyPlan) => axios.patch(`${url}/${id}`, updatedWeeklyPlan )

@@ -6,6 +6,9 @@ export default (weeklyPlans=[], action) => {
           return action.payload;
         case 'CREATE': 
           return [...weeklyPlans, action.payload]
+        case 'UPDATE': 
+          return weeklyPlans.map((weeklyPlan) => weeklyPlan._id === action.payload._id? action.payload: weeklyPlan)
+           
         default:
             return weeklyPlans
     }

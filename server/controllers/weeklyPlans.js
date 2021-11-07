@@ -1,4 +1,5 @@
 import weeklyPlans from '../models/weeklyPlans.js';
+import  mongoose from 'mongoose';
 
 // Get the different weekly plans
 export const getWeeklyPlans = async (req, res) => {
@@ -26,4 +27,16 @@ export const createWeeklyPlans = async (req, res) =>{
    }catch (error){
      res.status(409).json({message: error.message})
    }
+}
+
+export const updateWeeklyPlans = async (req, res) => {
+  const { id: _id} = req.params; 
+  const weeklyPlan = req.body; 
+
+  //check if the id is valid
+  if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No Post with that id')
+
+  const updatedPost = await weeklyPlans.findByIdAndUpdate(_id, {... weeklyPlan, _id}, {new: true} )
+
+   res.json(updatedPost)
 }
