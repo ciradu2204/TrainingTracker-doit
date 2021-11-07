@@ -1,12 +1,16 @@
-import React from "react";
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import weeklyPlans from "./components/WeeklyPlans/weeklyPlans";
+import React, {useEffect} from "react";
+import { Routes, Route} from "react-router-dom"
+import WeeklyPlans from "./components/WeeklyPlans/WeeklyPlans.js";
 import Account from "./components/Account/account";
 import Settings from "./components/Settings/settings";
 import Login from "./components/UserAuth/login";
 import Overview from "./components/Overview/overview"; 
 import Layout from "./components/layout";
 import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {BrowserRouter as Router} from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import {getWeeklyPlans} from "./actions/weeklyPlans"; 
+
 
 const theme  = createTheme({
 palette:{
@@ -24,19 +28,24 @@ palette:{
 })
 
 const App = () =>{
+    const dispatch  = useDispatch(); 
+
+    useEffect(() => {
+        dispatch(getWeeklyPlans())
+    }, [dispatch])
     return (
         <ThemeProvider theme={theme}>
-        <Router>
+            <Router>
             <Layout>
             <Routes>
-                <Route path="/" exact component={Login} />
-                <Route path="/overview" exact component ={Overview}/>
-                <Route path="/weeklyPlans" exact component = {weeklyPlans}/>
-                <Route path="/settings" exact component = {Settings}/>
-                <Route path="/account" exact component = {Account}/>
+                <Route path="/" exact element={Login} />
+                <Route path="/overview"  element={Overview}/>
+                <Route path="/weeklyPlans" element={<WeeklyPlans/>}/>
+                <Route path="/settings"  element={Settings}/>
+                <Route path="/account"  element={Account}/>
             </Routes>
             </Layout>
-        </Router>
+            </Router>
         </ThemeProvider>
     )
 }
