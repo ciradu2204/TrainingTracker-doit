@@ -32,8 +32,8 @@ const Form = () => {
                   <TextField name="title" variant="outlined" sx={{ my: 2 }} label="title" fullWidth value= {weeklyPlanData.title} onChange= {(e) => setweeklyPlanData({...weeklyPlanData, title: e.target.value})}/>
                   <TextField name="target" variant="outlined" sx={{ my: 2 }} label="target" fullWidth value= {weeklyPlanData.target} onChange= {(e) => setweeklyPlanData({...weeklyPlanData, target: e.target.value})}/>
                   <TextField name="achieved" variant="outlined" sx={{ my: 2 }} label="achieved" fullWidth value= {weeklyPlanData.achieved} onChange= {(e) => setweeklyPlanData({...weeklyPlanData, achieved: e.target.value})}/>
-                  <Button variant="container" color="primary" size="large" type="submit" sx={{ my: 2 }}>Submit</Button>
-                  <Button variant="container" color="secondary" size="small" onClick={clear} >Clear</Button>
+                  <Button variant="container" style={{ background: '#7A6AB8' , color:'white' }} size="large" type="submit" sx={{ my: 2 }} fullWidth>Submit</Button>
+                  <Button variant="container" style={{ background: '#7A6AB8' , color:'white' }}  size="small" onClick={clear} sx={{ my: 2 }} fullWidth>Clear</Button>
 
             </form>
 

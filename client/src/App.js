@@ -10,6 +10,8 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {BrowserRouter as Router} from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import {getWeeklyPlans} from "./actions/weeklyPlans"; 
+import Form from "./components/Form/Form";
+
 
 
 const theme  = createTheme({
@@ -38,11 +40,12 @@ const App = () =>{
             <Router>
             <Layout>
             <Routes>
-                <Route path="/" exact element={Login} />
-                <Route path="/overview"  element={Overview}/>
+                <Route path="/" exact element={<Login/>} />
+                <Route path="/overview"  element={<Overview/>}/>
                 <Route path="/weeklyPlans" element={<WeeklyPlans/>}/>
-                <Route path="/settings"  element={Settings}/>
-                <Route path="/account"  element={Account}/>
+                <Route path="/settings"  element={<Settings/>}/>
+                <Route path="/account"  element={<Account/>}/>
+                <Route path="/createPlan" element={<Form />}/>
             </Routes>
             </Layout>
             </Router>

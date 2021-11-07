@@ -1,18 +1,27 @@
 import React from "react";
 import WeeklyPlan from "./WeeklyPlan/WeeklyPlan";
+import {Grid, CircularProgress} from "@mui/material"; 
+
 import { useSelector } from "react-redux";
-import Form from "../Form/Form";
 
 const WeeklyPlans = () => {
 const  weeklyPlans =  useSelector((state) => state.weeklyPlans)
 
 console.log(weeklyPlans);
     return (
-        <>
-        <Form/>
-        <h1 >WeeklyPlans</h1>
-        <WeeklyPlan/>
-        </>
+        
+        !weeklyPlans.length ? <CircularProgress/> : (
+
+            <Grid>
+                {weeklyPlans.map((weeklyPlan) => (
+
+                    <Grid key={weeklyPlan.id} item xs={12} sm={6}>
+                         <WeeklyPlan weeklyPlan={weeklyPlan}/>
+                    </Grid>
+
+                ))}
+            </Grid>
+        )
     )
 
 }
