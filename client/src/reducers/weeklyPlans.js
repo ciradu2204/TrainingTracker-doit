@@ -5,7 +5,7 @@ export default (weeklyPlans=[], action) => {
         case 'FETCH_ALL':
           return action.payload;
         case 'CREATE': 
-          return weeklyPlans
+          return [...weeklyPlans, action.payload]
         default:
             return weeklyPlans
     }

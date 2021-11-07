@@ -12,3 +12,15 @@ export const  getWeeklyPlans = () => async(dispatch) =>{
     }
 
 }
+
+export const createWeeklyPlans = (post) => async(dispatch) => {
+
+    try {
+    
+        const {data} = await api.createPost(post); 
+         dispatch({type: "CREATE", payload: data})
+    }catch (error){
+        console.log(error)
+    }
+
+}
