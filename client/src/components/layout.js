@@ -12,7 +12,6 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import AppBar from "@mui/material/AppBar";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -89,11 +88,6 @@ export default function Layout({ children }) {
       path: "/settings",
     },
     {
-      text: "Create Plan",
-      icon: <AddBoxOutlinedIcon color="primary" />,
-      path: "/createPlan",
-    },
-    {
       text: "Logout",
       icon: <LogoutOutlinedIcon color="primary" />,
       path: "/logout",
@@ -130,7 +124,6 @@ export default function Layout({ children }) {
           </Typography>
 
           <IconButton
-            onClick=""
             color="inherit"
             size="large"
             sx={{ ml: -3 }}
