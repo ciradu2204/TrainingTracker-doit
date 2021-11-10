@@ -7,18 +7,24 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
 import AppBar from "@mui/material/AppBar";
+import Badge from "@mui/material/Badge";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import Toolbar from "@mui/material/Toolbar";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import IconButton from "@mui/material/IconButton";
+import { Divider } from "@mui/material";
+import moment from "moment"
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   page: {
-    background: "",
     width: "100%",
   },
   drawer: {
@@ -44,12 +50,20 @@ const useStyles = makeStyles((theme) => ({
   title: {
     padding: theme.spacing(2),
   },
-  appbar: {
-    background: "#fff !important",
-    width: `calc(100% - ${drawerWidth}px)`,
+  appBar: {
+    color:"black !important",
+    background: "#fff !important"
   },
-  header: {
-    color: "black !important ",
+  nonClickableButton: {
+     "&:hover": {
+      background: "none !important",
+    },
+  },
+  clickableButton: {
+    "&:hover": {
+      background: "none !important",
+      color: theme.palette.primary.main,
+    },
   },
   toolbar: theme.mixins.toolbar,
 }));
@@ -89,12 +103,55 @@ export default function Layout({ children }) {
     <div className={classes.root}>
       {/* App Bar */}
 
-      <AppBar elevation={0} className={classes.appbar}>
+      <AppBar
+        elevation={0}
+        className={classes.appBar}
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      >
         <Toolbar>
-          <Typography className={classes.header}>
-            Welcome to the .doit app!
+          <Typography variant="h7" noWrap component="div" sx={{ flexGrow: 1 }}>
+            {moment().format('MMMM Do YYYY, dddd')}
           </Typography>
+
+          <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            edge="end"
+            className={classes.clickableButton}
+          >
+            <Badge badgeContent={17} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+
+          <Typography variant="h7" noWrap component="div" sx={{ m: 2 }}>
+            John Doe
+          </Typography>
+
+          <IconButton
+            onClick=""
+            color="inherit"
+            size="large"
+            sx={{ ml: -3 }}
+            aria-haspopup="true"
+            aria-label="Modify current user account"
+            className={classes.clickableButton}
+          >
+            <KeyboardArrowDownIcon />
+          </IconButton>
+
+          <IconButton
+            edge="end"
+            size="large"
+            aria-label="account of current user"
+            color="inherit"
+            className={classes.nonClickableButton}
+          >
+            <AccountCircle />
+          </IconButton>
         </Toolbar>
+        <Divider />
       </AppBar>
 
       {/* Side Bar */}
