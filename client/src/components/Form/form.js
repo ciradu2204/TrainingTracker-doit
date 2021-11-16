@@ -11,9 +11,12 @@ import { useSelector } from "react-redux";
 const Form = ({ currentId, setCurrentId }) => {
   const dispatch = useDispatch();
   const [weeklyPlanData, setweeklyPlanData] = useState({
-    title: "",
-    target: "",
-    achieved: "",
+    step: 1, 
+    weeklyPlanName: "",
+    startDate: null,
+    endDate: null, 
+    repeat: '' , 
+    description: '',
   });
 
   const weeklyPlan = useSelector((state) =>

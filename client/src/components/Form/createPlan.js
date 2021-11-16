@@ -6,24 +6,31 @@ import {
   MenuItem,
   Select,
   Box,
-  Button,
 } from "@mui/material";
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import DatePicker from "@mui/lab/DatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { makeStyles } from "@mui/styles";
 
 const CreatePlan = () => {
   const [firstStepFormData, setFirstStepFormDate] = useState({
     weeklyPlanName: "",
-    start_Date: null,
-    end_Date: null,
+    startDate: null,
+    endDate: null,
     repeat: "",
     description: "",
   });
 
+  const useStyles = makeStyles((theme) => ({
+
+    root: {
+      width: 1200,
+    }
+  }))
+
+  const classes = useStyles()
   return (
-    <div style={{ width: '600px' }}>
+    <div className={classes.root}>
       {/* Weekly plan name */}
       <Box sx={{ flexDirection: "row", mb: 2 }}>
         <TextField
@@ -33,7 +40,7 @@ const CreatePlan = () => {
           variant="outlined"
           fullWidth
           value={firstStepFormData.weeklyPlanName}
-          onchange={(e) =>
+          onChange={(e) =>
             setFirstStepFormDate({
               ...firstStepFormData,
               weeklyPlanName: e.target.value,
@@ -51,13 +58,13 @@ const CreatePlan = () => {
             label="Start Date"
             openTo="year"
             views={["year", "month", "day"]}
-            value={firstStepFormData.start_Date}
-            onChange={(e) =>
+            value={firstStepFormData.startDate}
+            onChange={(newValue) =>
               setFirstStepFormDate({
                 ...firstStepFormData,
-                start_Date: e.target.value,
+                startDate: newValue,
               })
-            }
+             }
             renderInput={(params) => <TextField {...params} />}
           />
 
@@ -65,11 +72,11 @@ const CreatePlan = () => {
             label="End Date"
             openTo="year"
             views={["year", "month", "day"]}
-            value={firstStepFormData.end_Date}
-            onChange={(e) =>
+            value={firstStepFormData.endDate}
+            onChange={(newValue) =>
               setFirstStepFormDate({
                 ...firstStepFormData,
-                start_Date: e.target.value,
+                endDate: newValue,
               })
             }
             renderInput={(params) => <TextField {...params} />}
@@ -86,7 +93,7 @@ const CreatePlan = () => {
             id="repeat-select"
             value={firstStepFormData.repeat}
             label="Repeat"
-            onchange={(e) =>
+            onChange={(e) =>
               setFirstStepFormDate({
                 ...firstStepFormData,
                 repeat: e.target.value,
@@ -107,21 +114,15 @@ const CreatePlan = () => {
           label="Description"
           aria-label="description"
           value={firstStepFormData.description}
-          onchange={(e) =>
+          onChange={(e) =>
             setFirstStepFormDate({
               ...firstStepFormData,
               description: e.target.value,
             })
           }
           rows={2}
-          rowsMax={4}
+          rowsmax={4}
         />
-      </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }} >
-        <Button variant="contained" endIcon={<NavigateNextIcon />}>
-          Add Goals
-        </Button>
       </Box>
     </div>
   );

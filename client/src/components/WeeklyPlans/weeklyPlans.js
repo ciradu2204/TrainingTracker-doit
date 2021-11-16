@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import WeeklyPlan from "./WeeklyPlan/WeeklyPlan";
 import { Grid, CircularProgress, Button, Backdrop, Box } from "@mui/material";
 import { useSelector } from "react-redux";
-import Form from "../Form/Form";
+import Form from "../Form/form2";
 
  
 const WeeklyPlans = ({ setCurrentId, currentId }) => {
