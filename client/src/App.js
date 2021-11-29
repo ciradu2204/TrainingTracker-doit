@@ -23,8 +23,11 @@ palette:{
     secondary:{
         main:"#D1B8CF",
         light:"#BAA2B8",
-        black:"rgb(0,0,0, 0.7)"
-    }
+        black:"E5E5E5"
+    }, 
+    typography: {
+        fontFamily: "'Poppins', sans-serif"
+        }
 }
 })
 

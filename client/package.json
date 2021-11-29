@@ -8,8 +8,8 @@
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.5",
     "@mui/lab": "^5.0.0-alpha.54",
-    "@mui/material": "^5.0.6",
-    "@mui/styles": "^5.0.2",
+    "@mui/material": "^5.2.1",
+    "@mui/styles": "^5.2.1",
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -49,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@iconify/react": "^3.1.0"
   }
 }

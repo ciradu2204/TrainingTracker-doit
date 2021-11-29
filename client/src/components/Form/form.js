@@ -1,56 +1,115 @@
-import { React, useState, useEffect } from "react";
-import {  Paper } from "@mui/material";
-import { useDispatch } from "react-redux";
-import CreatePlan from "./createPlan.js";
-import {
-  createWeeklyPlans,
-  updateWeeklyPlans,
-} from "../../actions/weeklyPlans";
-import { useSelector } from "react-redux";
- 
-const Form = ({ currentId, setCurrentId }) => {
-  const dispatch = useDispatch();
+import React, { useState } from "react";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import CreatePlan from "./createPlan";
+import AddGoal from "./addGoals";
+import { Paper } from "@mui/material";
+import StepLabel from "@mui/material/StepLabel";
+import { makeStyles } from "@mui/styles";
+import {useDispatch} from "react-redux"
+import {createWeeklyPlans} from "../../actions/weeklyPlans"
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "80%",
+    height: "70%",
+    display: "flex",
+    flexDirection: "column",
+  },
+  container: {
+    height: "100%",
+  },
+}));
+
+const Form2 = ({handleBackdropClose}) => {
+  const [activeStep, setActiveStep] = useState(0);
+  const dispatch = useDispatch(); 
+
   const [weeklyPlanData, setweeklyPlanData] = useState({
-    step: 1, 
     weeklyPlanName: "",
     startDate: null,
-    endDate: null, 
-    repeat: '' , 
-    description: '',
+    endDate: null,
+    repeat: "None",
+    description: "",
+    completedGoals: 0,
+    goals: [
+      {
+        goalName: "",
+        date: null,
+        time: null,
+        target: { label: "Times", value: 0 },
+        achieved: { label: "Times", value: 0 },
+      }
+    ]
   });
 
-  const weeklyPlan = useSelector((state) =>
-    currentId
-      ? state.weeklyPlans.find((weeklyPlan) => weeklyPlan._id === currentId)
-      : null
-  );
+  // provide the different steps
+  const getSteps = () => {
+    return ["Create weekly Plan", "Add Goals"];
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const steps = getSteps();
 
-    if (currentId) {
-      dispatch(updateWeeklyPlans(currentId, weeklyPlanData));
-    } else {
-      dispatch(createWeeklyPlans(weeklyPlanData));
+  //get each step content
+  const getStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return <CreatePlan nextStep={nextStep}  data={weeklyPlanData} addDataToParent={addFormData}/>;
+      case 1:
+        return (
+          <AddGoal
+            nextStep={nextStep}
+            prevStep={prevStep}
+            data={weeklyPlanData}
+            activeStep={activeStep}
+            addDataToParent={addFormData}
+          />
+        );
+      default:
+        return <h1>No Steps remaning</h1>;
     }
-    
-    clear();
   };
 
-  const clear = () => {
-      setCurrentId(null); 
-      setweeklyPlanData({title:"", target: "", achieved: ""});
+  const addFormData = (formData) => {
+        setweeklyPlanData({...formData});
+  } 
+
+  const nextStep =  () => {
+     if (activeStep < 1) {
+      setActiveStep((currentStep) => currentStep + 1);
+    }else{
+      dispatch(createWeeklyPlans(weeklyPlanData))
+      handleBackdropClose(); 
+    }
+   };
+
+  const prevStep = () => {
+    if (activeStep > 0) {
+      setActiveStep((currentStep) => currentStep - 1);
+    }
   };
 
-  useEffect(() => {
-    if (weeklyPlan) setweeklyPlanData(weeklyPlan);
-  }, [weeklyPlan]);
+  
+
+  const classes = useStyles();
 
   return (
-    <Paper  sx={{ p: 4}}>
-       <CreatePlan/>
+    <Paper className={classes.root}>
+      <Stepper activeStep={activeStep} sx={{ p: 3 }}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+
+      {activeStep === steps.length ? (
+        <div>All steps completed</div>
+      ) : (
+        <div className={classes.container}>{getStepContent(activeStep)}</div>
+      )}
     </Paper>
   );
 };
 
-export default Form;
+export default Form2;

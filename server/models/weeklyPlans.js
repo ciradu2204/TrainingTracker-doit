@@ -1,12 +1,59 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const weeklyPlansSchema = mongoose.Schema({
-title: String, 
-target:String, 
-achieved: String
-
+  weeklyPlanName: String,
+  startDate: {
+    type: Date,
+    default: null,
+  },
+  completedGoals:{
+    type: Number, 
+    default: 0
+  },
+  endDate: {
+    type: Date,
+    default: null,
+  },
+  repeat: {
+    type: String,
+    default: "None",
+  },
+  description: String,
+  goals: [
+    {
+      goalName: String,
+      date: {
+        type: Date,
+        default: null,
+      },
+      time: {
+        type: Date,
+        default: null,
+      },
+      target: {
+        label: {
+          type: String,
+          default: "Times",
+        },
+        value: {
+          type: Number,
+          default: 0,
+        },
+      },
+      achieved: {
+        label: {
+          type: String,
+          default: "Times",
+        },
+        value: {
+          type: Number,
+          default: 0,
+        },
+      },
+    },
+  ],
 });
 
-const weeklyPlans = mongoose.model('weeklyPlans', weeklyPlansSchema); 
+const weeklyPlans = mongoose.model("weeklyPlans", weeklyPlansSchema);
 
-export default weeklyPlans; 
+export default weeklyPlans;

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import WeeklyPlan from "./WeeklyPlan/WeeklyPlan";
-import { Grid, CircularProgress, Button, Backdrop, Box } from "@mui/material";
+import { CircularProgress, Button, Backdrop, Box } from "@mui/material";
 import { useSelector } from "react-redux";
-import Form from "../Form/form2";
+import Form from "../Form/form";
 
  
 const WeeklyPlans = ({ setCurrentId, currentId }) => {
@@ -23,7 +23,7 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
     <>
     
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button variant="contained" onClick={handleToggle} sx={{ m: 2 }}>
+        <Button variant="contained" onClick={handleToggle} sx={{ mr: 15, mt: 5, mb: 5, borderRadius: "10px", background:'primary'  }}>
           Create Plan
         </Button>
       </Box>
@@ -31,12 +31,13 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
        >
-        <Form setCurrentId={setCurrentId}  currentId={currentId}/>
+        <Form setCurrentId={setCurrentId}  currentId={currentId} handleBackdropClose={handleClose}/>
       </Backdrop>
 
-      {!weeklyPlans.length ? (
+      {!weeklyPlans.length? (
         <Box
           sx={{
+            height: "100%", 
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -45,13 +46,11 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
-          {weeklyPlans.map((weeklyPlan) => (
-            <Grid key={weeklyPlan._id} item xs={12} sm={6} md={12}>
-              <WeeklyPlan weeklyPlan={weeklyPlan} setCurrentId={setCurrentId} />
-            </Grid>
-          ))}
-        </Grid>
+        weeklyPlans.map((weeklyPlan, index) => (
+
+        <WeeklyPlan key={index} weeklyPlan={weeklyPlan} setCurrentId={setCurrentId}/>
+
+        ))
       )}
     </>
   );
