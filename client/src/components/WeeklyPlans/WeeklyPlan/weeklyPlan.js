@@ -22,6 +22,17 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 import { Menu } from "@mui/material";
 import { MenuItem } from "@mui/material";
+import { useDispatch } from "react-redux";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import {
+  updateWeeklyPlans,
+  deleteWeeklyPlan,
+} from "../../../actions/weeklyPlans";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -37,7 +48,7 @@ const useStyles = makeStyles((theme) => {
     },
     accordion: {
       width: "80%",
-      margin: 20
+      margin: 20,
     },
     circularProgressBox: {
       position: "relative",
@@ -66,9 +77,7 @@ const useStyles = makeStyles((theme) => {
       borderRadius: "20px",
       justifyContent: "center",
     },
-    circleBox: {
-      color: "red",
-    },
+
     linearProgress: {
       "& .MuiLinearProgress-colorPrimary": {
         backgroundColor: theme.palette.secondary.black,
@@ -83,7 +92,7 @@ const useStyles = makeStyles((theme) => {
       width: 30,
       border: 1,
       cursor: "pointer",
-      backgroundColor: theme.palette.primary.main,
+      background: theme.palette.primary.main,
       borderBlockColor: "black",
     },
     checkBox: {
@@ -93,6 +102,10 @@ const useStyles = makeStyles((theme) => {
       justifyContent: "center",
       alignItems: "center",
     },
+
+    checkBoxNone: {
+      display: "none",
+    },
   };
 });
 
@@ -100,7 +113,11 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const classes = useStyles();
   const [expand, setExpand] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const dispatch = useDispatch();
+
   const open = Boolean(anchorEl);
+  const [openDialog, setOpenDialog] = React.useState(false);
+
 
   const handleViewMore = (event) => {
     setAnchorEl(event.currentTarget);
@@ -117,11 +134,31 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const handleEdit = () => {
     setCurrentId(weeklyPlan._id);
     handleClose();
-    handleBackdropOpen()
-     
+    handleBackdropOpen();
+  };
+  const handleClickOpenDialog = () => {
+     setOpenDialog(true);
+   };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
-  const markAsDone = (index) => {};
+  const handleDelete = () => {
+    handleCloseDialog()
+    dispatch(deleteWeeklyPlan(weeklyPlan._id))
+  };
+
+  const markAsDone = (index) => {
+    // update the target value
+    let target = weeklyPlan.goals[index].target.value;
+    weeklyPlan.goals[index].achieved.value = target;
+
+    //update completed
+    weeklyPlan.completedGoals = weeklyPlan.completedGoals + 1;
+
+    // dispatch(updateWeeklyPlans(weeklyPlan._id, weeklyPlan));
+  };
 
   return (
     <div className={classes.root}>
@@ -209,12 +246,34 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     "aria-labelledby": "edit-update-shareMenu",
                   }}
                 >
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={handleClickOpenDialog}>
                     <ListItemIcon>
                       <DeleteOutlineOutlinedIcon />
                     </ListItemIcon>
                     <ListItemText>Delete</ListItemText>
                   </MenuItem>
+                   {/* Delete Dialog */}
+                  <Dialog
+                    open={openDialog}
+                    onClose={handleCloseDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                  >
+                    <DialogTitle id="alert-dialog-title">
+                      {"Delete Weekly Plan"}
+                    </DialogTitle>
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                         Are you sure you want to delete this plan? 
+                      </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseDialog}>No</Button>
+                      <Button onClick={handleDelete} autoFocus>
+                        Yes
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                   <Divider />
                   <MenuItem onClick={handleEdit}>
                     <ListItemIcon>
@@ -222,6 +281,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     </ListItemIcon>
                     <ListItemText>Modify</ListItemText>
                   </MenuItem>
+
                   <Divider />
                   <MenuItem onClick={handleClose}>
                     <ListItemIcon>
@@ -249,13 +309,16 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               direction="row"
             >
               <Grid item xs={1} alignSelf="center">
-                <Box
-                  className={classes.checkBoxParent}
-                  onClick={markAsDone(index)}
-                >
-                  <Box className={classes.checkBox}>
-                    <CheckSharpIcon color="white" />
-                  </Box>
+                <Box className={classes.checkBoxParent}>
+                  <IconButton
+                    className={
+                      goal.target.value === goal.achieved.value
+                        ? classes.checkBox
+                        : classes.checkBoxNone
+                    }
+                  >
+                    <CheckSharpIcon />
+                  </IconButton>
                 </Box>
               </Grid>
               <Grid item xs={11}>

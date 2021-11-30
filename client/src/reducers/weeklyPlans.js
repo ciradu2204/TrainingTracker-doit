@@ -8,7 +8,8 @@ export default (weeklyPlans=[], action) => {
           return [...weeklyPlans, action.payload]
         case 'UPDATE': 
           return weeklyPlans.map((weeklyPlan) => weeklyPlan._id === action.payload._id? action.payload: weeklyPlan)
-           
+        case 'DELETE': 
+          return weeklyPlans.filter((weeklyPlan) => weeklyPlan._id !== action.payload)
         default:
             return weeklyPlans
     }

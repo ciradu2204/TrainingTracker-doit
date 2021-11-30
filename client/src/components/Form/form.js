@@ -98,8 +98,7 @@ const Form = ({
   };
 
   const addFormData = (formData) => {
-     console.log("Form Data provided")
-      setweeklyPlanData({ ...formData });
+       setweeklyPlanData({ ...formData });
       return true;
    };
 

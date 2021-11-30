@@ -36,3 +36,15 @@ export const updateWeeklyPlans = (id, weeklyPlan) => async(dispatch) => {
     }
 
 }
+
+export const deleteWeeklyPlan = (id) => async(dispatch) => {
+    
+    try{
+        await api.deleteWeeklyPlan(id)
+
+        dispatch({type: 'DELETE', payload:id})
+
+    }catch (error){
+       console.log(error)
+    }
+}

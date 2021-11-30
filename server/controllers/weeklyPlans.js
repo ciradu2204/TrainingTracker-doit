@@ -40,3 +40,18 @@ export const updateWeeklyPlans = async (req, res) => {
 
    res.json(updatedPost)
 }
+
+
+export const deleteWeeklyPlan = async (req, res) => {
+
+  const {id} = req.params
+  
+  //check if the id is valid 
+  if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No Weekly Plan with that id')
+
+  await weeklyPlans.findByIdAndRemove(id); 
+
+  res.json({message: 'Weekly Plan deleted successfully '})
+
+
+}
