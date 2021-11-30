@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import CreatePlan from "./createPlan";
@@ -6,8 +6,12 @@ import AddGoal from "./addGoals";
 import { Paper } from "@mui/material";
 import StepLabel from "@mui/material/StepLabel";
 import { makeStyles } from "@mui/styles";
-import {useDispatch} from "react-redux"
-import {createWeeklyPlans} from "../../actions/weeklyPlans"
+import { useDispatch } from "react-redux";
+import {
+  createWeeklyPlans,
+  updateWeeklyPlans,
+} from "../../actions/weeklyPlans";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,9 +25,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Form2 = ({handleBackdropClose}) => {
+const Form = ({
+  setCurrentId,
+  currentId,
+  handleBackdropOpen,
+  handleBackdropClose,
+}) => {
   const [activeStep, setActiveStep] = useState(0);
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   const [weeklyPlanData, setweeklyPlanData] = useState({
     weeklyPlanName: "",
@@ -39,14 +48,24 @@ const Form2 = ({handleBackdropClose}) => {
         time: null,
         target: { label: "Times", value: 0 },
         achieved: { label: "Times", value: 0 },
-      }
-    ]
+      },
+    ],
   });
 
+  //Fetching a weeklyPlan of the currentId
+  const weeklyPlan = useSelector((state) =>
+    currentId ? state.weeklyPlans.find((wp) => wp._id === currentId) : null
+  );
   // provide the different steps
   const getSteps = () => {
     return ["Create weekly Plan", "Add Goals"];
   };
+
+  useEffect(() => {
+    if (weeklyPlan) {
+      setweeklyPlanData({ ...weeklyPlan });
+    }
+  }, [weeklyPlan]);
 
   const steps = getSteps();
 
@@ -54,13 +73,21 @@ const Form2 = ({handleBackdropClose}) => {
   const getStepContent = (step) => {
     switch (step) {
       case 0:
-        return <CreatePlan nextStep={nextStep}  data={weeklyPlanData} addDataToParent={addFormData}/>;
+        return (
+          <CreatePlan
+            nextStep={nextStep}
+            data={weeklyPlanData}
+            currentId={currentId}
+            addDataToParent={addFormData}
+          />
+        );
       case 1:
         return (
           <AddGoal
             nextStep={nextStep}
             prevStep={prevStep}
             data={weeklyPlanData}
+            currentId={currentId}
             activeStep={activeStep}
             addDataToParent={addFormData}
           />
@@ -71,25 +98,35 @@ const Form2 = ({handleBackdropClose}) => {
   };
 
   const addFormData = (formData) => {
-        setweeklyPlanData({...formData});
-  } 
-
-  const nextStep =  () => {
-     if (activeStep < 1) {
-      setActiveStep((currentStep) => currentStep + 1);
-    }else{
-      dispatch(createWeeklyPlans(weeklyPlanData))
-      handleBackdropClose(); 
-    }
+     console.log("Form Data provided")
+      setweeklyPlanData({ ...formData });
+      return true;
    };
+
+  const handleSubmit = (formData) => {
+    if (currentId) {
+      dispatch(updateWeeklyPlans(currentId, formData));
+      handleBackdropClose();
+      setCurrentId(null)
+    } else {
+      dispatch(createWeeklyPlans(formData));
+      handleBackdropClose();
+    }
+  };
+
+  const nextStep = (formData) => {
+    if (activeStep < 1) {
+      setActiveStep((currentStep) => currentStep + 1);
+    } else {
+      handleSubmit(formData);
+    }
+  };
 
   const prevStep = () => {
     if (activeStep > 0) {
       setActiveStep((currentStep) => currentStep - 1);
     }
   };
-
-  
 
   const classes = useStyles();
 
@@ -112,4 +149,4 @@ const Form2 = ({handleBackdropClose}) => {
   );
 };
 
-export default Form2;
+export default Form;

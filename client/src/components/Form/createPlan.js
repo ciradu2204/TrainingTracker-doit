@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   FormControl,
@@ -15,10 +15,9 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { makeStyles } from "@mui/styles";
 import moment from "moment";
 
-const CreatePlan = ({ nextStep, data, addDataToParent }) => {
+const CreatePlan = ({ nextStep, data, addDataToParent, currentId }) => {
   const [formData, setFormData] = useState({ ...data });
   const [errors, setErrors] = useState({});
-
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -28,6 +27,10 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
       flexDirection: "Column",
     },
   }));
+
+  useEffect(() => {
+     setFormData({...data})
+  }, [data])
 
   const handleValidation = () => {
      let temp = {};
@@ -39,12 +42,12 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
       formData.startDate !== null ? "" : "This field is required";
 
     /** Use moment to calculate the date difference */
-    var momentEndDate = moment(formData.endDate, "DD-MM-YYYY");
-    var momentStartDate = moment(formData.startDate, "DD-MM-YYYY");
-    console.log(momentEndDate.diff(momentStartDate, "days"));
-    if (formData.endDate == null) {
+    var momentEndDate = moment(formData.endDate, "YYYY-MM-DD");
+     var momentStartDate = moment(formData.startDate, "YYYY-MM-DD");
+     if (formData.endDate == null) {
       temp.endDate = "This field is required";
     } else if (momentEndDate.diff(momentStartDate, "days") !== 7) {
+      console.log(momentEndDate.diff(momentStartDate, "days"))
       temp.endDate =
         "The diff between start date and end date should be 7 days";
     } else {
@@ -52,9 +55,9 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
     }
 
     temp.description =
-      formData.description.length > 30
+      formData.description.length > 100
         ? ""
-        : "A description should be 30 characters min";
+        : "A description should be 100 characters min";
 
     setErrors({ ...temp });
     return Object.values(temp).every((x) => x === "");
@@ -71,7 +74,6 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
   const classes = useStyles();
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
-      {/* Weekly plan name */}
       <Box sx={{ flexDirection: "row", mb: 2 }}>
         <TextField
           id="Weekly Plan Name"
@@ -89,12 +91,10 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
           }
         />
       </Box>
-      {/* Date pickker */}
-
-      <LocalizationProvider dateAdapter={AdapterMoment}>
+       <LocalizationProvider dateAdapter={AdapterMoment}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <DatePicker
-            disablePast
+            disablePast={currentId? false: true}
             label="Start Date"
             openTo="year"
             value={formData.startDate}
@@ -114,6 +114,7 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
           />
 
           <DatePicker
+            disablePast={currentId? false: true}
             label="End Date"
             openTo="year"
             value={formData.endDate}
@@ -196,7 +197,7 @@ const CreatePlan = ({ nextStep, data, addDataToParent }) => {
         </Button>
       </Box>
     </form>
-  );
+   );
 };
 
 export default CreatePlan;

@@ -7,3 +7,4 @@ router.post('/', createWeeklyPlans);
 router.patch('/:id', updateWeeklyPlans)
 
 export default router; 
+

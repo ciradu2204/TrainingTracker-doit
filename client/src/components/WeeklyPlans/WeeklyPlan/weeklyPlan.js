@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => {
     },
     accordion: {
       width: "80%",
+      margin: 20
     },
     circularProgressBox: {
       position: "relative",
@@ -95,7 +96,7 @@ const useStyles = makeStyles((theme) => {
   };
 });
 
-const WeeklyPlan = ({ weeklyPlan, setCurrentId }) => {
+const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const classes = useStyles();
   const [expand, setExpand] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -111,6 +112,13 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId }) => {
 
   const toggleAcordion = () => {
     setExpand((prev) => !prev);
+  };
+
+  const handleEdit = () => {
+    setCurrentId(weeklyPlan._id);
+    handleClose();
+    handleBackdropOpen()
+     
   };
 
   const markAsDone = (index) => {};
@@ -208,7 +216,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId }) => {
                     <ListItemText>Delete</ListItemText>
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={handleEdit}>
                     <ListItemIcon>
                       <ModeEditOutlineOutlinedIcon />
                     </ListItemIcon>
@@ -225,11 +233,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId }) => {
                 </Menu>
               </Grid>
               <Grid item>
-                <IconButton arial-label="Expand Icon">
-                  <ExpandMoreIcon
-                    onClick={toggleAcordion}
-                    sx={{ color: "white" }}
-                  />
+                <IconButton arial-label="Expand Icon" onClick={toggleAcordion}>
+                  <ExpandMoreIcon sx={{ color: "white" }} />
                 </IconButton>
               </Grid>
             </Grid>

@@ -34,7 +34,7 @@ export const updateWeeklyPlans = async (req, res) => {
   const weeklyPlan = req.body; 
 
   //check if the id is valid
-  if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No Post with that id')
+  if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No Weekly Plan with that id')
 
   const updatedPost = await weeklyPlans.findByIdAndUpdate(_id, {... weeklyPlan, _id}, {new: true} )
 

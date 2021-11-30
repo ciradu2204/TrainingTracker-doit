@@ -23,7 +23,7 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
     <>
     
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button variant="contained" onClick={handleToggle} sx={{ mr: 15, mt: 5, mb: 5, borderRadius: "10px", background:'primary'  }}>
+        <Button variant="contained" onClick={handleToggle}  sx={{ mr: 15, mt: 5, mb: 5, borderRadius: "10px", background:'primary'  }}>
           Create Plan
         </Button>
       </Box>
@@ -48,7 +48,7 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
       ) : (
         weeklyPlans.map((weeklyPlan, index) => (
 
-        <WeeklyPlan key={index} weeklyPlan={weeklyPlan} setCurrentId={setCurrentId}/>
+        <WeeklyPlan key={index} weeklyPlan={weeklyPlan} setCurrentId={setCurrentId} handleBackdropOpen={handleToggle} />
 
         ))
       )}
