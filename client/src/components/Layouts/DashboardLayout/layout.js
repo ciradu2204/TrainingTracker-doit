@@ -1,6 +1,5 @@
 import React, { useState, window } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { makeStyles } from "@mui/styles";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
@@ -22,51 +21,10 @@ import IconButton from "@mui/material/IconButton";
 import { Divider } from "@mui/material";
 import moment from "moment";
 import { Box } from "@mui/material";
+import useStyles from "./style"
 
 const drawerWidth = 240;
-const useStyles = makeStyles((theme) => {
-  return {
-    page: {
-      width: "100%",
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    root: {
-      display: "flex",
-    },
-    active: {
-      "&::after": {
-        content: '""',
-        display: "inline-block",
-        width: 2,
-        position: "absolute",
-        right: 0,
-        height: 20,
-        background: theme.palette.primary.main,
-      },
-    },
-    title: {
-      padding: theme.spacing(2),
-    },
-    appBar: {
-      color: "black !important",
-      background: "#fff !important",
-    },
-    nonClickableButton: {
-      "&:hover": {
-        background: "none !important",
-      },
-    },
-    clickableButton: {
-      "&:hover": {
-        background: "none !important",
-        color: theme.palette.primary.main,
-      },
-    },
-    toolbar: theme.mixins.toolbar,
-  };
-});
+
 
 export default function Layout({ children }) {
   const classes = useStyles();

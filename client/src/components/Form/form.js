@@ -1,39 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import CreatePlan from "./createPlan";
-import AddGoal from "./addGoals";
+import CreatePlan from "./CreatePlan/createPlan";
+import AddGoal from "./AddGoals/addGoals";
 import { Paper } from "@mui/material";
 import StepLabel from "@mui/material/StepLabel";
-import { makeStyles } from "@mui/styles";
 import { useDispatch } from "react-redux";
 import {
   createWeeklyPlans,
   updateWeeklyPlan,
 } from "../../actions/weeklyPlans";
 import { useSelector } from "react-redux";
-
-const useStyles = makeStyles((theme) => {
-  return {
-  root: {
-    overflowY:  'scroll',
-    [theme.breakpoints.up('md')]: {
-      width: "80%",
-      height: "70%",
-      display: "flex",
-      flexDirection: "column",
-
-    },
-    [theme.breakpoints.down('md')]: {
-      width: "95%",
-    }
-   
-  },
-  container: {
-    height: "100%",
-  },
-  }
-});
+import useStyles from './style';
 
 const Form = ({
   setCurrentId,

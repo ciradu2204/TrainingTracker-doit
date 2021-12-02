@@ -12,25 +12,14 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import DatePicker from "@mui/lab/DatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { makeStyles } from "@mui/styles";
 import moment from "moment";
 import { Grid } from "@mui/material";
+import useStyles from "./style"
 
 const CreatePlan = ({ nextStep, data, addDataToParent, currentId }) => {
   const [formData, setFormData] = useState({ ...data });
   const [errors, setErrors] = useState({});
-  const useStyles = makeStyles((theme) => {
-    return {
-      root: {
-        display: "flex",
-        height: "100%",
-        marginLeft: "20px",
-        marginRight: "20px",
-        flexDirection: "Column",
-      },
-    };
-  });
-
+  
   useEffect(() => {
     setFormData({ ...data });
   }, [data]);

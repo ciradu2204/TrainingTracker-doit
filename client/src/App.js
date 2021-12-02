@@ -5,7 +5,7 @@ import Account from "./components/Account/account";
 import Settings from "./components/Settings/settings";
 import Login from "./components/UserAuth/login";
 import Overview from "./components/Overview/overview"; 
-import Layout from "./components/layout";
+import Layout from "./components/Layouts/DashboardLayout/layout";
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {BrowserRouter as Router} from 'react-router-dom';
 import { useDispatch } from "react-redux";
