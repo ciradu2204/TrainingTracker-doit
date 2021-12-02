@@ -9,21 +9,31 @@ import { makeStyles } from "@mui/styles";
 import { useDispatch } from "react-redux";
 import {
   createWeeklyPlans,
-  updateWeeklyPlans,
+  updateWeeklyPlan,
 } from "../../actions/weeklyPlans";
 import { useSelector } from "react-redux";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => {
+  return {
   root: {
-    width: "80%",
-    height: "70%",
-    display: "flex",
-    flexDirection: "column",
+    overflowY:  'scroll',
+    [theme.breakpoints.up('md')]: {
+      width: "80%",
+      height: "70%",
+      display: "flex",
+      flexDirection: "column",
+
+    },
+    [theme.breakpoints.down('md')]: {
+      width: "95%",
+    }
+   
   },
   container: {
     height: "100%",
   },
-}));
+  }
+});
 
 const Form = ({
   setCurrentId,
@@ -37,6 +47,7 @@ const Form = ({
   const [weeklyPlanData, setweeklyPlanData] = useState({
     weeklyPlanName: "",
     startDate: null,
+    likeCount: 0,
     endDate: null,
     repeat: "None",
     description: "",
@@ -48,6 +59,7 @@ const Form = ({
         time: null,
         target: { label: "Times", value: 0 },
         achieved: { label: "Times", value: 0 },
+        completed: false,
       },
     ],
   });
@@ -104,7 +116,7 @@ const Form = ({
 
   const handleSubmit = (formData) => {
     if (currentId) {
-      dispatch(updateWeeklyPlans(currentId, formData));
+      dispatch(updateWeeklyPlan(currentId, formData));
       handleBackdropClose();
       setCurrentId(null)
     } else {
@@ -131,7 +143,7 @@ const Form = ({
 
   return (
     <Paper className={classes.root}>
-      <Stepper activeStep={activeStep} sx={{ p: 3 }}>
+      <Stepper activeStep={activeStep} sx={{ my: 3, mx:1, position: "sticky", top: "0", background:"white", zIndex: 3, height: "40px", py: "10px"}}>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>

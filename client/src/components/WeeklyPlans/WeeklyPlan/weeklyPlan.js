@@ -23,15 +23,17 @@ import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 import { Menu } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { useDispatch } from "react-redux";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Button from '@mui/material/Button';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import Button from "@mui/material/Button";
 import {
-  updateWeeklyPlans,
   deleteWeeklyPlan,
+  likeWeeklyPlan,
+  markGoalComplete,
 } from "../../../actions/weeklyPlans";
 
 const useStyles = makeStyles((theme) => {
@@ -47,12 +49,16 @@ const useStyles = makeStyles((theme) => {
       justifyContent: "center",
     },
     accordion: {
-      width: "80%",
-      margin: 20,
-    },
+      margin: "20px 0"
+     },
     circularProgressBox: {
-      position: "relative",
-      display: "inline-flex",
+      [theme.breakpoints.up("xs")]: {
+        display: "none",
+      },
+      [theme.breakpoints.up("md")]: {
+        position: "relative",
+        display: "inline-flex",
+      },
     },
     AccordionSummary: {
       background: theme.palette.primary.main,
@@ -67,7 +73,7 @@ const useStyles = makeStyles((theme) => {
     },
     iconBox: {
       top: 8,
-      left: 8,
+      left: 9,
       bottom: 8,
       right: 8,
       position: "absolute",
@@ -98,6 +104,7 @@ const useStyles = makeStyles((theme) => {
     checkBox: {
       display: "flex",
       height: "100%",
+      width: "100%",
       color: "white",
       justifyContent: "center",
       alignItems: "center",
@@ -118,7 +125,6 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = React.useState(false);
 
-
   const handleViewMore = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -137,27 +143,32 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
     handleBackdropOpen();
   };
   const handleClickOpenDialog = () => {
-     setOpenDialog(true);
-   };
+    setOpenDialog(true);
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
 
   const handleDelete = () => {
-    handleCloseDialog()
-    dispatch(deleteWeeklyPlan(weeklyPlan._id))
+    handleCloseDialog();
+    dispatch(deleteWeeklyPlan(weeklyPlan._id));
   };
 
-  const markAsDone = (index) => {
-    // update the target value
-    let target = weeklyPlan.goals[index].target.value;
-    weeklyPlan.goals[index].achieved.value = target;
+  const handleLike = () => {
+    dispatch(likeWeeklyPlan(weeklyPlan._id));
+  };
 
-    //update completed
-    weeklyPlan.completedGoals = weeklyPlan.completedGoals + 1;
+  const markAsDone = (goalId, goalIndex) => {
+    if (!weeklyPlan.goals[goalIndex].completed) {
+      dispatch(markGoalComplete(weeklyPlan._id, goalId, goalIndex));
+    }
+  };
 
-    // dispatch(updateWeeklyPlans(weeklyPlan._id, weeklyPlan));
+  const calculateProgress = (current, target) => {
+    let value = current / target;
+    let roundedNumber = value.toFixed(1);
+    return roundedNumber * 100;
   };
 
   return (
@@ -174,11 +185,14 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
           id="panel1a-header"
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item xs={1}>
+            <Grid item md={2} lg={1}>
               <Box className={classes.circularProgressBox}>
                 <CircularProgress
                   variant="determinate"
-                  value={50}
+                  value={calculateProgress(
+                    weeklyPlan.completedGoals,
+                    weeklyPlan.goals.length
+                  )}
                   size={65}
                   thickness={6}
                   className={classes.circularProgress}
@@ -192,7 +206,15 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               </Box>
             </Grid>
 
-            <Grid item container direction="column" xs={10} rowSpacing={1}>
+            <Grid
+              item
+              container
+              direction="column"
+              xs={11}
+              md={9}
+              lg={10}
+              rowSpacing={1}
+            >
               <Grid
                 item
                 container
@@ -207,20 +229,50 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Grid>
               </Grid>
               <Grid item>
-                <Typography variant="h7">{weeklyPlan.description}</Typography>
+                <Typography>{weeklyPlan.description}</Typography>
               </Grid>
-              <Grid item container direction="row" columnSpacing={2}>
-                <Grid item>
+              <Grid
+                item
+                container
+                rowSpacing={2}
+                direction="row"
+                alignItems="center"
+              >
+                <Grid item xs={12} md={5}>
                   <Typography>
-                    {weeklyPlan.completedGoals}/{weeklyPlan.goals.length} done
+                    Date: &nbsp;
+                    {moment(weeklyPlan.startDate).format("MMM Do YYYY")} -{" "}
+                    {moment(weeklyPlan.endDate).format("MMM Do YYYY")}
                   </Typography>
                 </Grid>
 
-                <Grid item>
+                <Grid item xs={12} md={3}>
                   <Typography>
-                    {moment(weeklyPlan.startDate).format("MMMM Do YYYY")} -{" "}
-                    {moment(weeklyPlan.endDate).format("MMMM Do YYYY")}
+                    Completed: &nbsp; {weeklyPlan.completedGoals}/
+                    {weeklyPlan.goals.length} done
                   </Typography>
+                </Grid>
+
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  md={3}
+                  direction="row"
+                  alignItems="center"
+                >
+                  <FavoriteBorderIcon
+                    onClick={() => {
+                      handleLike();
+                    }}
+                    color="secondary"
+                  />
+
+                  <Typography>
+                    {" "}
+                    &nbsp; {weeklyPlan.likeCount} &nbsp;{" "}
+                  </Typography>
+                  <Typography>Likes </Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -228,13 +280,20 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               item
               container
               xs={1}
+              md={1}
+              lg= {1}
               direction="column"
               justifyContent="space-between"
               alignItems="flex-end"
               sx={{ width: "100%", height: "100%" }}
             >
               <Grid item>
-                <IconButton arial-label="More" onClick={handleViewMore}>
+                <IconButton
+                  arial-label="More"
+                  onClick={(e) => {
+                    handleViewMore(e);
+                  }}
+                >
                   <Icon icon="mdi:dots-vertical" color="white" />
                 </IconButton>
                 <Menu
@@ -246,13 +305,17 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     "aria-labelledby": "edit-update-shareMenu",
                   }}
                 >
-                  <MenuItem onClick={handleClickOpenDialog}>
+                  <MenuItem
+                    onClick={() => {
+                      handleClickOpenDialog();
+                    }}
+                  >
                     <ListItemIcon>
                       <DeleteOutlineOutlinedIcon />
                     </ListItemIcon>
                     <ListItemText>Delete</ListItemText>
                   </MenuItem>
-                   {/* Delete Dialog */}
+                  {/* Delete Dialog */}
                   <Dialog
                     open={openDialog}
                     onClose={handleCloseDialog}
@@ -264,18 +327,33 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     </DialogTitle>
                     <DialogContent>
                       <DialogContentText id="alert-dialog-description">
-                         Are you sure you want to delete this plan? 
+                        Are you sure you want to delete this plan?
                       </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                      <Button onClick={handleCloseDialog}>No</Button>
-                      <Button onClick={handleDelete} autoFocus>
+                      <Button
+                        onClick={() => {
+                          handleCloseDialog();
+                        }}
+                      >
+                        No
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleDelete();
+                        }}
+                        autoFocus
+                      >
                         Yes
                       </Button>
                     </DialogActions>
                   </Dialog>
                   <Divider />
-                  <MenuItem onClick={handleEdit}>
+                  <MenuItem
+                    onClick={() => {
+                      handleEdit();
+                    }}
+                  >
                     <ListItemIcon>
                       <ModeEditOutlineOutlinedIcon />
                     </ListItemIcon>
@@ -283,7 +361,11 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                   </MenuItem>
 
                   <Divider />
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem
+                    onClick={() => {
+                      handleClose();
+                    }}
+                  >
                     <ListItemIcon>
                       <IosShareIcon />
                     </ListItemIcon>
@@ -293,13 +375,19 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Menu>
               </Grid>
               <Grid item>
-                <IconButton arial-label="Expand Icon" onClick={toggleAcordion}>
+                <IconButton
+                  arial-label="Expand Icon"
+                  onClick={() => {
+                    toggleAcordion();
+                  }}
+                >
                   <ExpandMoreIcon sx={{ color: "white" }} />
                 </IconButton>
               </Grid>
             </Grid>
           </Grid>
         </AccordionSummary>
+        {/* Details */}
         <AccordionDetails>
           {weeklyPlan.goals.map((goal, index) => (
             <Grid
@@ -308,8 +396,14 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               sx={{ width: "100%", height: "100%", mt: 3, mb: 3 }}
               direction="row"
             >
-              <Grid item xs={1} alignSelf="center">
-                <Box className={classes.checkBoxParent}>
+              <Grid item xs={2} md={1} alignSelf="center">
+                <Box
+                  disabled={goal.completed ? true : false}
+                  className={classes.checkBoxParent}
+                  onClick={() => {
+                    markAsDone(goal._id, index);
+                  }}
+                >
                   <IconButton
                     className={
                       goal.target.value === goal.achieved.value
@@ -321,16 +415,17 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                   </IconButton>
                 </Box>
               </Grid>
-              <Grid item xs={11}>
+              <Grid item xs={10} md={11}>
                 <Card className={classes.card} sx={{ borderRadius: "15px" }}>
                   <Grid container direction="row" alignItems="baseline">
-                    <Grid item xs={2}>
+                    <Grid item xs={6} md={2}>
                       <Typography variant="h6">{goal.goalName}</Typography>
                     </Grid>
                     <Grid
                       item
                       container
-                      xs={2}
+                      xs={5}
+                      md={2}
                       direction="row"
                       alignItems="center"
                       spacing={1}
@@ -345,7 +440,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     <Grid
                       item
                       container
-                      xs={2}
+                      xs={5}
+                      md={2}
                       direction="row"
                       alignItems="center"
                       spacing={1}
@@ -359,7 +455,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     <Grid
                       item
                       container
-                      xs={2}
+                      xs={5}
+                      md={2}
                       direction="row"
                       alignItems="center"
                       spacing={1}
@@ -376,22 +473,28 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                       direction="row"
                       columnSpacing={2}
                       alignItems="center"
-                      xs={3}
+                      xs={10}
+                      md={3}
                       className={classes.linearProgress}
                     >
                       <Grid item xs={11}>
                         <LinearProgress
                           variant="determinate"
-                          value={
-                            (goal.achieved.value / goal.target.value) % 100
-                          }
+                          value={calculateProgress(
+                            goal.achieved.value,
+                            goal.target.value
+                          )}
                           sx={{ height: 10 }}
                         />
                       </Grid>
 
                       <Grid item xs={1}>
                         <Typography>
-                          {(goal.achieved.value / goal.target.value) % 100}%
+                          {calculateProgress(
+                            goal.achieved.value,
+                            goal.target.value
+                          )}
+                          %
                         </Typography>
                       </Grid>
                     </Grid>

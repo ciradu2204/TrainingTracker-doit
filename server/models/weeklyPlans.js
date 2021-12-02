@@ -6,6 +6,10 @@ const weeklyPlansSchema = mongoose.Schema({
     type: Date,
     default: null,
   },
+  likeCount: {
+    type: Number, 
+    default:  0, 
+  },
   completedGoals:{
     type: Number, 
     default: 0
@@ -50,6 +54,10 @@ const weeklyPlansSchema = mongoose.Schema({
           default: 0,
         },
       },
+      completed:{
+        type: Boolean, 
+        default: false
+      }
     },
   ],
 });

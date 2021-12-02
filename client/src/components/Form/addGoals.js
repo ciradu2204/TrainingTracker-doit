@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TimePicker from "@mui/lab/TimePicker";
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import DatePicker from "@mui/lab/DatePicker";
@@ -6,6 +6,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import moment from "moment";
+import { Divider, Grid, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { InputAdornment, Box, FormControl } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -13,38 +14,35 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    height: "100%",
-    marginLeft: "20px",
-    marginRight: "20px",
-    flexDirection: "Column",
-    "& .MuiTextField-root": {
-      margin: theme.spacing(2),
+const useStyles = makeStyles((theme) => {
+  return {
+    root: {
+      display: "flex",
+      height: "100%",
+      flexDirection: "Column",
+      "& .MuiTextField-root": {
+        margin: theme.spacing(2),
+      },
+    },
+  
+    cancelButton: {
+      width: "fit-content",
+      height: "fit-content",
+      display: "flex",
+    },
+    cancelButtonContainer: {
+      maxHeight: "80px",
+      display: "flex",
+      alignItems: "center",
+    },
+    error: {
+      color: theme.palette.error.main,
+      marginLeft: "15px",
+      marginBottom: "10px"
      },
-  },
-  container: {
-    display: "flex",
-    flexDirection: "row",
-  },
- 
-  cancelButton: {
-    width: "fit-content",
-    height: "fit-content",
-    display: "flex",
-  },
-  cancelButtonContainer: {
-    maxHeight: "80px",
-    display: "flex",
-    alignItems: "center",
-  },
-  error: {
-    color: theme.palette.error.main,
-    marginLeft: "20px",
-  },
- 
-}));
+
+  };
+});
 
 const AddGoal = ({
   activeStep,
@@ -64,6 +62,7 @@ const AddGoal = ({
   const [formData, setFormData] = useState({ ...data });
 
   const [errors, setErrors] = useState([]);
+  const [maxGoalsError, setMaxGoalsError] = useState("")
 
   const handleTime = (index, time) => {
     const values = [...formData.goals];
@@ -71,12 +70,11 @@ const AddGoal = ({
     setFormData({ ...formData, goals: values });
   };
 
-
   const handleDate = (index, date2) => {
     const values = [...formData.goals];
     values[index]["date"] = date2;
     setFormData({ ...formData, goals: values });
-    addDataToParent(formData)
+    addDataToParent(formData);
   };
 
   const handleValidation = () => {
@@ -90,13 +88,18 @@ const AddGoal = ({
 
       // Check if the date is in the weekly plan date range
       const compareDate = moment(prefix.date, "YYYY-MM-DD");
-      const startDate = moment(formData.startDate, "YYYY-MM-DD").subtract(1, 'days');
-      const endDate = moment(formData.endDate, "YYYY-MM-DD").add(1, 'days');
+      const startDate = moment(formData.startDate, "YYYY-MM-DD").subtract(
+        1,
+        "days"
+      );
+      const endDate = moment(formData.endDate, "YYYY-MM-DD").add(1, "days");
       const isBetween = compareDate.isBetween(startDate, endDate);
       if (prefix.date == null) {
         error.date = "This field is required";
       } else if (isBetween === false) {
-        error.date = `The date should be between ${startDate.format( "MMM Do YYYY")}  and ${endDate.format("MMM Do YYYY")} `;
+        error.date = `The date should be between ${startDate.format(
+          "MMM Do YYYY"
+        )}  and ${endDate.format("MMM Do YYYY")} `;
       } else {
         error.date = "";
       }
@@ -109,6 +112,9 @@ const AddGoal = ({
           : "";
       temp.push(error);
     }
+
+    formData.goals.length > 2 ? setMaxGoalsError("") : setMaxGoalsError("You need to add at least 3 goals");
+
 
     setErrors([...temp]);
     return temp.every((el) => {
@@ -127,26 +133,27 @@ const AddGoal = ({
 
     if (result === true) {
       setFormData({ ...formData, goals: [...formData.goals, initial] });
-      addDataToParent(formData)
+      addDataToParent(formData);
     }
   };
 
-  const inputardoment = (index, addGoalField) => {
+  const inputardoment = (index, goal, typeOfSelect) => {
     return (
-      <FormControl  variant="standard">
-      <Select
-        value={addGoalField.achieved.label}
-        name="Measures"
-        disableUnderline
-        onChange={(e) => handleMeasurements(index, "all", "label", e)}
-      >
-        <MenuItem key="Times" value="Times">
-          Times
-        </MenuItem>
-        <MenuItem key="Min" value="Min">
-          Mins
-        </MenuItem>
-      </Select>
+      <FormControl variant="standard">
+        <Select
+          disabled={goal.completed  ? true : currentId ? false : typeOfSelect === "target"? false: true}
+          value={goal.achieved.label}
+          name="Measures"
+          disableUnderline
+          onChange={(e) => handleMeasurements(index, "all", "label", e)}
+        >
+          <MenuItem key="Times" value="Times">
+            Times
+          </MenuItem>
+          <MenuItem key="Min" value="Min">
+            Mins
+          </MenuItem>
+        </Select>
       </FormControl>
     );
   };
@@ -173,146 +180,216 @@ const AddGoal = ({
     setFormData({ ...formData, goals: values });
   };
 
+  const checkIfCompleted = (formData) => {
+    for (var i = 0; i < formData.goals.length; i++) {
+      if (formData.goals[i].achieved.value === formData.goals[i].target.value) {
+        formData.goals[i].completed = true;
+        formData.completedGoals = formData.completedGoals + 1;
+      }
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     let result = handleValidation();
-    if (result === true && formData.goals.length > 2) {
-      addDataToParent(formData);
-      nextStep(formData);
-    } else {
-      let maxAddedGoals =
-      formData.goals.length > 2 ? "" : "You need to add at least 3 goals";
-      setErrors([...errors, maxAddedGoals ]);
+     if (result === true && maxGoalsError === "") {
+      //Incase someone edit an exercise and mark it as complete
+      if (currentId) {
+        checkIfCompleted(formData);
+        addDataToParent(formData);
+        nextStep(formData);
+      } else {
+        addDataToParent(formData);
+        nextStep(formData);
+      }
     }
   };
 
   const classes = useStyles();
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
-      <span className={classes.error}>{errors.maxAddedGoals}</span>
+    <form className={classes.root} onSubmit={(e) => {handleSubmit(e)}}>
+      <Typography className={classes.error}>{maxGoalsError}</Typography>
       {formData.goals &&
-        formData.goals.map((addGoalField, index) => (
-          <div key={index} className={classes.container}>
-            <TextField
-              id="Goal Name"
-              label="Goal Name"
-              variant="outlined"
-              name="goalName"
-              value={addGoalField.goalName}
-              error={errors.length >= index +1 ? !!errors[index].goalName : false}
-              helperText={errors.length >= index + 1 ? errors[index].goalName : ""}
-              onChange={(e) => handleChange(index, e)}
-            />
+        formData.goals.map((goal, index) => (
+          <Grid
+            container
+            direction="row"
+            key={index}
+            
+            >
+            <Grid item xs={12} sx={{mx:2}}  >
+              <Typography>Goal {index + 1}</Typography>
+              <Divider sx={{maxWidth:"92%"}} />
+            </Grid>
 
-            {/* Time picker and date picker  */}
-
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                disablePast={currentId ? false : true}
-                label="Date"
-                openTo="year"
-                value={addGoalField.date}
-                name="date"
-                onChange={(e) => handleDate(index, e)}
-                renderInput={(params) => (
+            <Grid item container  >
+              <Grid item container xs={11}>
+                <Grid item xs={6} md={4}>
                   <TextField
-                    {...params}
-                    error={errors.length >= index + 1 ? !!errors[index].date : false}
-                    helperText={errors.length >= index + 1 ? errors[index].date : ""}
+                    id="Goal Name"
+                    label="Goal Name"
+                    variant="outlined"
+                    name="goalName"
+                    value={goal.goalName}
+                    error={
+                      errors.length >= index + 1
+                        ? !!errors[index].goalName
+                        : false
+                    }
+                    helperText={
+                      errors.length >= index + 1 ? errors[index].goalName : ""
+                    }
+                    onChange={(e) => handleChange(index, e)}
                   />
-                )}
-              />
-            </LocalizationProvider>
+                </Grid>
+                <Grid item xs={6} md={4}>
+                  {/* Time picker and date picker  */}
+                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <DatePicker
+                      label="Date"
+                      openTo="year"
+                      value={goal.date}
+                      name="date"
+                      onChange={(e) => handleDate(index, e)}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          error={
+                            errors.length >= index + 1
+                              ? !!errors[index].date
+                              : false
+                          }
+                          helperText={
+                            errors.length >= index + 1 ? errors[index].date : ""
+                          }
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
 
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <TimePicker
-                label="Time"
-                name="Time"
-                value={addGoalField.time}
-                renderInput={(params) => (
+                <Grid item xs={6} md={4}> 
+                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <TimePicker
+                      label="Time"
+                      name="Time"
+                      value={goal.time}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          error={
+                            errors.length >= index + 1
+                              ? !!errors[index].time
+                              : false
+                          }
+                          helperText={
+                            errors.length >= index + 1
+                              ? errors[index].time
+                              : null
+                          }
+                        />
+                      )}
+                      onChange={(e) => handleTime(index, e)}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={6} md={4}>
+                  {/* The target and achieved  */}
+
                   <TextField
-                    {...params}
-                    error={errors.length >= index + 1 ? !!errors[index].time : false}
-                    helperText={errors.length >= index + 1 ? errors[index].time : null}
+                    value={goal.target.value}
+                    disabled={goal.completed ? true : false}
+                    name="target"
+                    error={
+                      errors.length >= index + 1
+                        ? !!errors[index].target
+                        : false
+                    }
+                    helperText={
+                      errors.length >= index + 1 ? errors[index].target : ""
+                    }
+                    className={classes.numberInput}
+                    id="Target"
+                    type="number"
+                    onChange={(e) =>
+                      handleMeasurements(index, "target", "value", e)
+                    }
+                    label="Target"
+                    variant="outlined"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {inputardoment(index, goal, "target")}
+                        </InputAdornment>
+                      ),
+                    }}
                   />
-                )}
-                onChange={(e) => handleTime(index, e)}
-              />
-            </LocalizationProvider>
+                </Grid>
 
-            {/* The target and achieved  */}
+                <Grid item xs={6} md={4}>
+                  <TextField
+                    value={goal.achieved.value}
+                    disabled={goal.completed ? true : currentId ? false : true}
+                    name="Achieved"
+                    id="Achieved"
+                    error={
+                      errors.length >= index + 1
+                        ? !!errors[index].achieved
+                        : false
+                    }
+                    helperText={
+                      errors.length >= index + 1 ? errors[index].achieved : ""
+                    }
+                    label="Achieved"
+                    type="number"
+                    onChange={(e) =>
+                      handleMeasurements(index, "achieved", "value", e)
+                    }
+                    variant="outlined"
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {inputardoment(index, goal, "achieved")}
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
 
-            <TextField
-              value={addGoalField.target.value}
-              name="target"
-              error={errors.length >= index + 1? !!errors[index].target : false}
-              helperText={errors.length >= index + 1 ? errors[index].target : ""}
-              className={classes.numberInput}
-              id="Target"
-              type="number"
-              onChange={(e) => handleMeasurements(index, "target", "value", e)}
-              label="Target"
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {inputardoment(index, addGoalField)}
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <TextField
-              value={addGoalField.achieved.value}
-              name="Achieved"
-              id="Achieved"
-              error={errors.length >= index + 1 ? !!errors[index].achieved : false}
-              helperText={errors.length >= index + 1 ? errors[index].achieved : ""}
-              label="Achieved"
-              type="number"
-              onChange={(e) =>
-                handleMeasurements(index, "achieved", "value", e)
-              }
-              variant="outlined"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {inputardoment(index, addGoalField)}
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <div className={classes.cancelButtonContainer}>
-              <IconButton
-                aria-label="delete"
-                size="medium"
-                color="primary"
-                className={classes.cancelButton}
-                onClick={() => handleDeleteFields(index)}
-              >
-                <CancelOutlinedIcon fontSize="medium" />
-              </IconButton>
-            </div>
-          </div>
+              <Grid item xs={1} alignSelf="center">
+                <div className={classes.cancelButtonContainer}>
+                  <IconButton
+                    aria-label="delete"
+                    size="medium"
+                    color="primary"
+                    className={classes.cancelButton}
+                    onClick={() => handleDeleteFields(index)}
+                  >
+                    <CancelOutlinedIcon fontSize="medium" />
+                  </IconButton>
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
         ))}
 
-      <div>
+       <Box sx={{display: "flex", justifyContent:"start", mx:2 }}>
         <Button
           variant="contained"
           size="medium"
-          sx={{ m: 2 }}
           onClick={() => handleAddFields()}
         >
           Add
         </Button>
-      </div>
+        </Box>
       <Box
         sx={{
           display: "flex",
-          height: "inherit",
-          pb: "10px",
+           mx: "10px",
+          my: "10px",
           justifyContent: "end",
-          alignItems: "end",
         }}
       >
         <Button disabled={activeStep === 0} onClick={prevStep}>

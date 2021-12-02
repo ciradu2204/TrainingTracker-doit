@@ -14,50 +14,54 @@ import DatePicker from "@mui/lab/DatePicker";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { makeStyles } from "@mui/styles";
 import moment from "moment";
+import { Grid } from "@mui/material";
 
 const CreatePlan = ({ nextStep, data, addDataToParent, currentId }) => {
   const [formData, setFormData] = useState({ ...data });
   const [errors, setErrors] = useState({});
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      display: "flex",
-      height: "100%",
-      marginLeft: "20px",
-      marginRight: "20px",
-      flexDirection: "Column",
-    },
-  }));
+  const useStyles = makeStyles((theme) => {
+    return {
+      root: {
+        display: "flex",
+        height: "100%",
+        marginLeft: "20px",
+        marginRight: "20px",
+        flexDirection: "Column",
+      },
+    };
+  });
 
   useEffect(() => {
-     setFormData({...data})
-  }, [data])
+    setFormData({ ...data });
+  }, [data]);
 
   const handleValidation = () => {
-     let temp = {};
+    let temp = {};
     temp.weeklyPlanName =
-      formData.weeklyPlanName.length > 0
-        ? ""
-        : "This field is required";
+      formData.weeklyPlanName.length > 0 ? "" : "This field is required";
     temp.startDate =
       formData.startDate !== null ? "" : "This field is required";
 
     /** Use moment to calculate the date difference */
     var momentEndDate = moment(formData.endDate, "YYYY-MM-DD");
-     var momentStartDate = moment(formData.startDate, "YYYY-MM-DD");
-     if (formData.endDate == null) {
+    var momentStartDate = moment(formData.startDate, "YYYY-MM-DD");
+    if (formData.endDate == null) {
       temp.endDate = "This field is required";
     } else if (momentEndDate.diff(momentStartDate, "days") !== 7) {
-      console.log(momentEndDate.diff(momentStartDate, "days"))
+      console.log(momentEndDate.diff(momentStartDate, "days"));
       temp.endDate =
         "The diff between start date and end date should be 7 days";
     } else {
       temp.endDate = "";
     }
 
-    temp.description =
-      formData.description.length > 100
-        ? ""
-        : "A description should be 100 characters min";
+    if (formData.description.length < 50) {
+      temp.description = "A description should be 50 characters min ";
+    } else if (formData.description.length < 100) {
+      temp.description = "A description should be 100 characters max ";
+    } else {
+      temp.description = "";
+    }
 
     setErrors({ ...temp });
     return Object.values(temp).every((x) => x === "");
@@ -74,115 +78,126 @@ const CreatePlan = ({ nextStep, data, addDataToParent, currentId }) => {
   const classes = useStyles();
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
-      <Box sx={{ flexDirection: "row", mb: 2 }}>
-        <TextField
-          id="Weekly Plan Name"
-          label="Weekly Plan Name"
-          variant="outlined"
-          error={!!errors.weeklyPlanName}
-          helperText={errors.weeklyPlanName}
-          fullWidth
-          value={formData.weeklyPlanName}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              weeklyPlanName: e.target.value,
-            })
-          }
-        />
-      </Box>
-       <LocalizationProvider dateAdapter={AdapterMoment}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-          <DatePicker
-            disablePast={currentId? false: true}
-            label="Start Date"
-            openTo="year"
-            value={formData.startDate}
-            onChange={(newValue) =>
+      <Grid container direction="column" rowSpacing={2}>
+        <Grid item >
+          <TextField
+            id="Weekly Plan Name"
+            label="Weekly Plan Name"
+            variant="outlined"
+            error={!!errors.weeklyPlanName}
+            helperText={errors.weeklyPlanName}
+            fullWidth
+            value={formData.weeklyPlanName}
+            onChange={(e) =>
               setFormData({
                 ...formData,
-                startDate: newValue,
+                weeklyPlanName: e.target.value,
               })
             }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={!!errors.startDate}
-                helperText={errors.startDate}
-              />
-            )}
           />
+        </Grid>
 
-          <DatePicker
-            disablePast={currentId? false: true}
-            label="End Date"
-            openTo="year"
-            value={formData.endDate}
-            onChange={(newValue) =>
+        <Grid item container direction="row"  justifyContent="space-between">
+          <Grid item xs={5}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                disablePast={currentId ? false : true}
+                label="Start Date"
+                openTo="year"
+                value={formData.startDate}
+                onChange={(newValue) =>
+                  setFormData({
+                    ...formData,
+                    startDate: newValue,
+                  })
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={!!errors.startDate}
+                    helperText={errors.startDate}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+
+          <Grid item xs={5} sx={{display: "flex", justifyContent: "flex-end"}}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                disablePast={currentId ? false : true}
+                label="End Date"
+                openTo="year"
+                value={formData.endDate}
+                onChange={(newValue) =>
+                  setFormData({
+                    ...formData,
+                    endDate: newValue,
+                  })
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={!!errors.endDate}
+                    helperText={errors.endDate}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
+
+        <Grid item>
+          <FormControl required sx={{ width: "40%", mb: 2 }}>
+            <InputLabel id="repeat-select">Repeat </InputLabel>
+            <Select
+              labelId="repeat-select"
+              id="repeat-select"
+              value={formData.repeat}
+              label="Repeat"
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  repeat: e.target.value,
+                })
+              }
+            >
+              <MenuItem value="None">None </MenuItem>
+              <MenuItem value="This Week">This Week</MenuItem>
+              <MenuItem value="Weekly">Weekly</MenuItem>
+              <MenuItem value="Bi-weekly">Bi-weekly</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item>
+          <TextField
+            placeholder="Enter a small description about your plan"
+            multiline
+            fullWidth
+            error={!!errors.description}
+            helperText={errors.description}
+            label="Description"
+            aria-label="description"
+            value={formData.description}
+            onChange={(e) =>
               setFormData({
                 ...formData,
-                endDate: newValue,
+                description: e.target.value,
               })
             }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={!!errors.endDate}
-                helperText={errors.endDate}
-              />
-            )}
+            rows={2}
+            rowsmax={4}
           />
-        </Box>
-      </LocalizationProvider>
+        </Grid>
+      </Grid>
 
-      {/* Select */}
-
-      <FormControl required sx={{ width: "40%", mb: 2 }}>
-        <InputLabel id="repeat-select">Repeat </InputLabel>
-        <Select
-          labelId="repeat-select"
-          id="repeat-select"
-          value={formData.repeat}
-          label="Repeat"
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              repeat: e.target.value,
-            })
-          }
-        >
-          <MenuItem value="None">None </MenuItem>
-          <MenuItem value="This Week">This Week</MenuItem>
-          <MenuItem value="Weekly">Weekly</MenuItem>
-          <MenuItem value="Bi-weekly">Bi-weekly</MenuItem>
-        </Select>
-      </FormControl>
-      {/* TextArea */}
-      <Box sx={{ flexDirection: "row", mb: 2 }}>
-        <TextField
-          placeholder="Enter a small description about your plan"
-          multiline
-          fullWidth
-          error={!!errors.description}
-          helperText={errors.description}
-          label="Description"
-          aria-label="description"
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              description: e.target.value,
-            })
-          }
-          rows={2}
-          rowsmax={4}
-        />
-      </Box>
       <Box
         sx={{
           display: "flex",
           height: "inherit",
-          pb: "10px",
+          mx: "10px",
+          my: "20px",
           justifyContent: "end",
           alignItems: "end",
         }}
@@ -197,7 +212,7 @@ const CreatePlan = ({ nextStep, data, addDataToParent, currentId }) => {
         </Button>
       </Box>
     </form>
-   );
+  );
 };
 
 export default CreatePlan;
