@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = 'http://localhost:5000/weeklyPlans'; 
+const url = 'https://trainingtracker-doit.herokuapp.com/weeklyPlans'; 
 
 export const fetchWeeklyPlans = () => axios.get(url)
 

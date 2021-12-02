@@ -22,11 +22,11 @@ import { Divider } from "@mui/material";
 import moment from "moment";
 import { Box } from "@mui/material";
 import useStyles from "./style"
+import { Outlet } from "react-router";
 
 const drawerWidth = 240;
 
-
-export default function Layout({ children }) {
+export default function Layout() {
   const classes = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
@@ -195,7 +195,7 @@ export default function Layout({ children }) {
       <div className={classes.page}>
         {/* avoid the children from going under the toolbar */}
         <div className={classes.toolbar}></div>
-        {children}
+         <Outlet/>
       </div>
     </div>
   );
