@@ -14,8 +14,10 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { Typography } from "@mui/material";
 import GoogleLogin from "react-google-login";
 import { useDispatch } from "react-redux";
-import {useHistory} from "react-router-dom";
-import {signin} from '../../../actions/auth.js'
+import {useNavigate} from "react-router-dom";
+import {signin} from '../../../actions/auth.js';
+import { useSelector } from "react-redux";
+import { Alert } from "@mui/material";
 
 const Login = () => {
   const [formData, setformData] = React.useState({
@@ -24,15 +26,16 @@ const Login = () => {
   });
 
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) =>{
       e.preventDefault()
-      dispatch((signin(formData, history)))
-
+      dispatch((signin(formData, navigate)))
   }
 
   const [showPassword, setShowPassword] = React.useState(false);
+  const auth = useSelector((state) => state.auth);
+
 
   const classes = useStyles();
 
@@ -49,8 +52,15 @@ const Login = () => {
   };
 
   const googleSuccess = async (res) => {
-    console.log(res);
-  };
+    const result = res?.profileObj;
+    const token = res?.tokenId;
+    try {
+      dispatch({ type: "AUTH", data: { result, token } });
+      navigate("/dashboard/weeklyPlans")
+    } catch (error) {
+      console.log(error);
+    }
+   };
 
   const googleFailure = (error) => {
     console.log(error);
@@ -131,6 +141,11 @@ const Login = () => {
       <Grid item className={classes.forgotPassword}>
         <ListItem>Forgot Password?</ListItem>
       </Grid>
+      <Grid item sx={{mt: 2}} className={classes.item}>
+          {auth.signInErrors?.response?(<Alert severity="error" variant="outlined" sx={{textAlign: "center"}} >
+            {auth.signInErrors?.response.data.message}
+           </Alert>): null}
+        </Grid>
       <Grid item className={classes.buttonContainer}>
         <Button type="submit" variant="contained" sx={{ width: "20ch" }}>
           Sign in

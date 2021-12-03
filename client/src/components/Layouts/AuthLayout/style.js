@@ -19,8 +19,6 @@ export default makeStyles((theme) => {
          paddingTop: "100px",
       },
       paddingTop: "10px",
-      height: "100%",
-      width: "100%",
     },
     imageContainer: {
       [theme.breakpoints.up('xs')]:{

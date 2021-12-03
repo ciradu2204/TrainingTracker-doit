@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import WeeklyPlans from "./components/WeeklyPlans/WeeklyPlans.js";
 import DashboardLayout from "./components/Layouts/DashboardLayout/layout";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getWeeklyPlans } from "./actions/weeklyPlans";
 import AuthLayout from "./components/Layouts/AuthLayout/layout";
@@ -37,11 +37,16 @@ const App = () => {
   }, [currentId, dispatch]);
   return (
     <ThemeProvider theme={theme}>
-      <Router>
+      <BrowserRouter>
         <Routes>
-          <Route path="/weeklyPlans" element={<DashboardLayout />}>
+          <Route path="/" element={<AuthLayout />}>
+            <Route path="" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
+
+          <Route path="/dashboard" element={<DashboardLayout />}>
             <Route
-              path=""
+              path="weeklyPlans"
               element={
                 <WeeklyPlans
                   setCurrentId={setCurrentId}
@@ -51,14 +56,7 @@ const App = () => {
             />
           </Route>
         </Routes>
-
-        <Routes>
-          <Route path="/" element={<AuthLayout />}>
-            <Route path="" element={<Login />} />
-            <Route path="register" element={<Register />} />
-          </Route>
-        </Routes>
-      </Router>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };

@@ -60,6 +60,14 @@ const weeklyPlansSchema = mongoose.Schema({
       }
     },
   ],
+  userName:{
+    type: String, 
+    required: true
+  },
+  creator: {
+    type: String, 
+    required: true
+  }, 
 });
 
 const weeklyPlans = mongoose.model("weeklyPlans", weeklyPlansSchema);

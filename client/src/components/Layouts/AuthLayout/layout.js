@@ -11,9 +11,9 @@ export default function AuthLayout() {
 
   const classes = useStyles();
   return (
-    <Grid container direction="row" xs={12} className={classes.root}>
+    <Grid container direction="row"  className={classes.root}>
       <Grid item container xs={12} md={6} className={classes.imageContainer}>
-        <Grid item xs={12} className={classes.overlay} direction="column">
+        <Grid item xs={12} className={classes.overlay} >
           <Typography className={classes.title}>.doit</Typography>
 
           <Typography className={classes.description}>
@@ -34,12 +34,11 @@ export default function AuthLayout() {
           <Grid item container direction="row" className={classes.links}>
             <Grid item>
               <ListItem
-                onClick={() => navigate("/")}
+                onClick={() => navigate("")}
                 className={
                   location.pathname === "/" ? classes.selected : classes.link
                 }
-                exact
-              >
+               >
                 Login
               </ListItem>
             </Grid>
@@ -51,8 +50,7 @@ export default function AuthLayout() {
                     ? classes.selected
                     : classes.link
                 }
-                exact
-              >
+               >
                 Register
               </ListItem>
             </Grid>

@@ -1,4 +1,4 @@
-import React, {} from "react";
+import React from "react";
 import { Grid } from "@mui/material";
 import { TextField } from "@mui/material";
 import { InputAdornment } from "@mui/material";
@@ -15,10 +15,11 @@ import GoogleIcon from "@mui/icons-material/Google";
 import { Typography } from "@mui/material";
 import GoogleLogin from "react-google-login";
 import { useDispatch } from "react-redux";
-import {useHistory} from "react-router-dom";
-import {signup} from '../../../actions/auth.js'
+import { useNavigate } from "react-router-dom";
+import { signup } from "../../../actions/auth.js";
+import { useSelector } from "react-redux";
+import { Alert } from "@mui/material";
 
- 
 const Register = () => {
   const [formData, setformData] = React.useState({
     firstName: "",
@@ -28,34 +29,35 @@ const Register = () => {
     confirmPassword: "",
   });
 
+ 
+
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [confirmPassword, setConfirmPasswordShow] = React.useState(false);
   const classes = useStyles();
+  const auth = useSelector((state) => state.auth);
 
   const handleChange = (prop) => (event) => {
     setformData({ ...formData, [prop]: event.target.value });
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-
-    dispatch((signup(formData, history)))
-  }
+    e.preventDefault();
+    dispatch(signup(formData, navigate));
+    };
 
   const googleSuccess = async (res) => {
     const result = res?.profileObj;
     const token = res?.tokenId;
-
     try {
       dispatch({ type: "AUTH", data: { result, token } });
+      navigate("/dashboard/weeklyPlans");
     } catch (error) {
       console.log(error);
     }
-    console.log(res);
   };
-  
+
   const googleFailure = (error) => {
     console.log(error);
     console.log("Failured to register with using google, try again");
@@ -73,7 +75,7 @@ const Register = () => {
     event.preventDefault();
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={(e) => handleSubmit(e)}>
       <Grid item container direction="column" xs={12} alignItems="center">
         <Grid item xs={12} className={classes.item}>
           <GoogleLogin
@@ -98,45 +100,52 @@ const Register = () => {
         <Grid item>
           <Typography sx={{ mt: "20px" }}>Or</Typography>
         </Grid>
-        <Grid item container xs={12} columnSpacing={0.5}  className={classes.item}>
-          <Grid item xs={6} >
-          <TextField
-            label="First Name"
-            required
-            id="firstName-textField"
-            fullWidth
-            onChange={handleChange("firstName")}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonOutlineIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+        <Grid
+          item
+          container
+          xs={12}
+          columnSpacing={0.5}
+          rowSpacing={4}
+          className={classes.item}
+        >
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="First Name"
+              required
+              id="firstName-textField"
+              fullWidth
+              onChange={handleChange("firstName")}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonOutlineIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
 
-          <Grid item  xs={6} >
-          <TextField
-            label="Last Name"
-            required
-            id="secondName-textField"
-            fullWidth
-            onChange={handleChange("lastName")}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonOutlineIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Grid item xs={12} md={6}>
+            <TextField
+              label="Last Name"
+              required
+              id="secondName-textField"
+              fullWidth
+              onChange={handleChange("lastName")}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonOutlineIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
           </Grid>
-        
         </Grid>
         <Grid item xs={12} className={classes.item}>
           <TextField
             label="Email"
+            type="email"
             id="email-textField"
             required
             fullWidth
@@ -153,7 +162,7 @@ const Register = () => {
 
         <Grid item xs={12} className={classes.item}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">
+            <InputLabel required htmlFor="outlined-adornment-password">
               Password
             </InputLabel>
             <OutlinedInput
@@ -180,15 +189,14 @@ const Register = () => {
         </Grid>
         <Grid item xs={12} className={classes.item}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">
+            <InputLabel required htmlFor="outlined-adornment-password">
               Confirm Password
             </InputLabel>
             <OutlinedInput
-              required
-              id="outlined-adornment-password"
+              id="outlined-adornment-confirmpassword"
               type={confirmPassword ? "text" : "password"}
               value={formData.confirmPassword}
-              onChange={handleChange("password")}
+              onChange={handleChange("confirmPassword")}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -204,6 +212,12 @@ const Register = () => {
               label="Password"
             />
           </FormControl>
+        </Grid>
+
+        <Grid item sx={{mt: 2}} className={classes.item}>
+          {auth.signUpErrors?.response?(<Alert severity="error" variant="outlined" sx={{textAlign: "center"}} >
+            {auth.signUpErrors?.response.data.message}
+           </Alert>): null}
         </Grid>
 
         <Grid item className={classes.buttonContainer}>

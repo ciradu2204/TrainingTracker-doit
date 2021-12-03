@@ -6,7 +6,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import moment from "moment";
-import { Divider, Grid, Typography } from "@mui/material";
+import { Alert, Divider, Grid, Typography } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { InputAdornment, Box, FormControl } from "@mui/material";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -178,8 +178,8 @@ const AddGoal = ({
   const classes = useStyles();
   return (
     <form className={classes.root} onSubmit={(e) => {handleSubmit(e)}}>
-      <Typography className={classes.error}>{maxGoalsError}</Typography>
-      {formData.goals &&
+      {maxGoalsError?<Alert sx={{m:2}} variant="outlined"  severity="error">{maxGoalsError}</Alert>: null}
+       {formData.goals &&
         formData.goals.map((goal, index) => (
           <Grid
             container
@@ -279,8 +279,7 @@ const AddGoal = ({
                     helperText={
                       errors.length >= index + 1 ? errors[index].target : ""
                     }
-                    className={classes.numberInput}
-                    id="Target"
+                     id="Target"
                     type="number"
                     onChange={(e) =>
                       handleMeasurements(index, "target", "value", e)
@@ -357,8 +356,10 @@ const AddGoal = ({
       <Box
         sx={{
           display: "flex",
-           mx: "10px",
+          mx: "10px",
           my: "10px",
+          height: "100%",
+          alignItems: "end",
           justifyContent: "end",
         }}
       >

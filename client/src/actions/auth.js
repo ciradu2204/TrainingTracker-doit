@@ -1,23 +1,30 @@
 import * as api from '../api';
-import {AUTH} from '../constants/actionTypes';
+import {AUTH, SIGNINERROR, SIGNUPERROR} from '../constants/actionTypes';
 
-export const signin = (formData, history) => async(dispatch) => {
+export const signin = (formData, navigate) => async(dispatch) => {
 
     try {
-        history.push('/weeklyPlan')
+        const {data} = await api.signIn(formData); 
+         
+        dispatch({type: AUTH, data})
+        navigate('/dashboard/weeklyPlans')
 
     } catch (error) {
-        console.log(error)
+        const errorMessage = {error}
+        dispatch({type: SIGNINERROR, errorMessage})
     }
 
 }
 
-export const signup = (formData, history) => async(dispatch) => {
+export const signup = (formData, navigate) => async(dispatch) => {
 
     try {
-        history.push('/weeklyPlan')
+        const {data} = await api.signUp(formData); 
+         dispatch({type: AUTH,  data})
+         navigate('/dashboard/weeklyPlans')
     } catch (error) {
-        console.log(error)
+        const errorMessage = {error}
+        dispatch({type: SIGNUPERROR, errorMessage})
     }
 
 }

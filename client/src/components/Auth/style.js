@@ -4,16 +4,16 @@ export default makeStyles((theme) => {
   return {
     item: {
       [theme.breakpoints.up("xs")]: {
-        marginTop: "20px",
-        width: "70%",
-      },
+        marginTop: "30px",
+        width: "80%",
+       },
       [theme.breakpoints.up("md")]: {
         width: "70%",
-        marginTop: "30px",
+        marginTop: "20px",
       },
     },
     buttonContainer: {
-      marginTop: "20px",
+      margin: "20px 0",
     },
     forgotPassword: {
       width: "70%",

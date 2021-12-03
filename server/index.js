@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.send("Welcome to Training Tracker App/doit API")
 })
 
-app.use('/weeklyPlans', weeklyPlansRoutes);
+app.use('/weeklyPlan', weeklyPlansRoutes);
 app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;

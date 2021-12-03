@@ -5,7 +5,7 @@ const router = express.Router();
 import auth from '../middleware/auth.js'
 
 router.get('/', auth,  getWeeklyPlans);
-router.post('/', auth,  createWeeklyPlans);
+router.post('/', auth, createWeeklyPlans);
 router.patch('/:id', auth, updateWeeklyPlan)
 router.delete('/:id', auth,  deleteWeeklyPlan)
 router.patch('/:id/likeWeeklyPlan', auth,  likeWeeklyPlan)

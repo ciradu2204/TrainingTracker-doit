@@ -22,11 +22,7 @@ export default makeStyles((theme) => {
         display: "flex",
         alignItems: "center",
       },
-      error: {
-        color: theme.palette.error.main,
-        marginLeft: "15px",
-        marginBottom: "10px"
-       },
+      
   
     };
   });

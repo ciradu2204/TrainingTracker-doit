@@ -16,12 +16,11 @@ import useStyles from './style';
 const Form = ({
   setCurrentId,
   currentId,
-  handleBackdropOpen,
   handleBackdropClose,
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const dispatch = useDispatch();
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
   const [weeklyPlanData, setweeklyPlanData] = useState({
     weeklyPlanName: "",
     startDate: null,
@@ -93,12 +92,12 @@ const Form = ({
    };
 
   const handleSubmit = (formData) => {
-    if (currentId) {
-      dispatch(updateWeeklyPlan(currentId, formData));
+     if (currentId) {
+      dispatch(updateWeeklyPlan(currentId, {...formData, userName: user?.result?.name}));
       handleBackdropClose();
       setCurrentId(null)
     } else {
-      dispatch(createWeeklyPlans(formData));
+      dispatch(createWeeklyPlans({...formData, userName: user?.result?.name}));
       handleBackdropClose();
     }
   };
@@ -121,7 +120,7 @@ const Form = ({
 
   return (
     <Paper className={classes.root}>
-      <Stepper activeStep={activeStep} sx={{ my: 3, mx:1, position: "sticky", top: "0", background:"white", zIndex: 3, height: "40px", py: "10px"}}>
+      <Stepper activeStep={activeStep} sx={{ my: 2, mx:1, position: "sticky", top: "0", background:"white", zIndex: 3, height: "30px", py: "10px"}}>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>

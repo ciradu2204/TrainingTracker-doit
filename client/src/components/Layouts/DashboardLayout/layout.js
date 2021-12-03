@@ -1,4 +1,4 @@
-import React, { useState, window } from "react";
+import React, { useState, window, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
@@ -6,7 +6,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
@@ -18,12 +17,13 @@ import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import IconButton from "@mui/material/IconButton";
-import { Divider } from "@mui/material";
+import { Avatar, Divider } from "@mui/material";
 import moment from "moment";
 import { Box } from "@mui/material";
 import useStyles from "./style"
 import { Outlet } from "react-router";
-
+import { useDispatch } from "react-redux";
+ 
 const drawerWidth = 240;
 
 export default function Layout() {
@@ -31,28 +31,45 @@ export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const container =
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+  const dispatch = useDispatch()
+
+  const logout = () => {
+    console.log("logingout");
+     dispatch({type: 'LOGOUT'})
+     navigate("/")
+     setUser(null);
+  }
+
+ 
+  useEffect(() => {
+   // const token = user?.token; 
+    setUser(JSON.parse(localStorage.getItem('profile')))
+  }, [location])
+
+  
+   const container =
     window !== undefined ? () => window().document.body : undefined;
   const menuItems = [
     {
       text: "Overview",
       icon: <HomeOutlinedIcon color="primary" />,
-      path: "/overview",
+      path: "/dashboard/overview",
     },
     {
       text: "My weekly plans",
       icon: <ListAltOutlinedIcon color="primary" />,
-      path: "/weeklyPlans",
+      path: "/dashboard/weeklyPlans",
     },
     {
       text: "Settings",
       icon: <SettingsOutlinedIcon color="primary" />,
-      path: "/settings",
+      path: "/dashboard/settings",
     },
     {
       text: "Logout",
       icon: <LogoutOutlinedIcon color="primary" />,
-      path: "/logout",
+      path: "/",
     },
   ];
 
@@ -70,7 +87,7 @@ export default function Layout() {
             <ListItem
               button
               key={item.text}
-              onClick={() => navigate(item.path)}
+              onClick={() => (item.text === "Logout")? logout() : navigate(item.path)}
               className={
                 location.pathname === item.path ? classes.active : null
               }
@@ -125,7 +142,7 @@ export default function Layout() {
           </IconButton>
 
           <Typography variant="h7" noWrap component="div" sx={{ m: 2 }}>
-            John Doe
+            {user.result.name}
           </Typography>
 
           <IconButton
@@ -139,15 +156,7 @@ export default function Layout() {
             <KeyboardArrowDownIcon />
           </IconButton>
 
-          <IconButton
-            edge="end"
-            size="large"
-            aria-label="account of current user"
-            color="inherit"
-            className={classes.nonClickableButton}
-          >
-            <AccountCircle />
-          </IconButton>
+           <Avatar className={classes.purple} alt={user.result.name} src={user.result.imageUrl}>{user.result.name.charAt(0)}</Avatar>
         </Toolbar>
         <Divider />
       </AppBar>

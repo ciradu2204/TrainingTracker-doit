@@ -70,7 +70,7 @@ const WeeklyPlans = ({ setCurrentId, currentId }) => {
           </Backdrop>
         </Grid>
       </Grid>
-      {!weeklyPlans.length ? (
+      {!weeklyPlans? (
         <Box
           sx={{
             height: "100%",

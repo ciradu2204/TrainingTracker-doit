@@ -1,15 +1,32 @@
 import axios from 'axios'
 
-const url = 'https://trainingtracker-doit.herokuapp.com/weeklyPlans'; 
+const API = axios.create({baseURL: 'http://localhost:5000' })
 
-export const fetchWeeklyPlans = () => axios.get(url)
+//pass the user token to the backend 
 
-export const createWeeklyPlan = (newWeeklyPlan) => axios.post(url, newWeeklyPlan)
+API.interceptors.request.use((req) =>{
 
-export const updateWeeklyPlan = (id, updatedWeeklyPlan) => axios.patch(`${url}/${id}`, updatedWeeklyPlan )
+    if(localStorage.getItem('profile')){
+        req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
+    }
 
-export const deleteWeeklyPlan = (id) => axios.delete(`${url}/${id}`); 
+    return req
+})
 
-export const likeWeeklyPlan = (id) => axios.patch(`${url}/${id}/likeWeeklyPlan`);
 
-export const markGoalComplete = (id, goalId, goalIndex) => axios.patch(`${url}/${id}/${goalId}/${goalIndex}/markGoalComplete`);
+//the different backend apis
+export const fetchWeeklyPlans = () => API.get('/weeklyPlan')
+
+export const createWeeklyPlan = (newWeeklyPlan) => API.post('/weeklyPlan', newWeeklyPlan)
+
+export const updateWeeklyPlan = (id, updatedWeeklyPlan) => API.patch(`/weeklyPlan/${id}`, updatedWeeklyPlan )
+
+export const deleteWeeklyPlan = (id) => API.delete(`/weeklyPlan/${id}`); 
+
+export const likeWeeklyPlan = (id) => API.patch(`/weeklyPlan/${id}/likeWeeklyPlan`);
+
+export const markGoalComplete = (id, goalId, goalIndex) => API.patch(`/weeklyPlan/${id}/${goalId}/${goalIndex}/markGoalComplete`);
+
+export const signIn = (formData)  => API.post('/user/signin', formData);
+
+export const signUp = (formData) => API.post('/user/signup', formData);
