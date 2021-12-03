@@ -61,13 +61,27 @@ export const deleteWeeklyPlan = async (req, res) => {
 export const likeWeeklyPlan = async (req, res) => {
   const { id } = req.params;
 
+  //check if the user is authenticated 
+
+  if(!req.userId) return res.json({message: 'Unauthenticated'})
+
   //check if the id is valid
   if (!mongoose.Types.ObjectId.isValid(id))
   return res.status(404).send("No Weekly Plan with that id");
 
-   const weeklyPlan = await weeklyPlans.findById(id)
+  const weeklyPlan = await weeklyPlans.findById(id)
 
-  const updatedWeeklyPlan = await weeklyPlans.findByIdAndUpdate(id, {likeCount: weeklyPlan.likeCount + 1}, {new: true})
+  const index = weeklyPlan.likes.findBYIndex((id) => id === String(req.userId))
+
+  if(index === -1 ){
+    // A user can like the plan 
+    weeklyPlan.likes.push(req.userId)
+  }else{
+    // A user dislike the plan 
+    weeklyPlan.likes = weeklyPlan.likes.filter((id) => id !== String(req.userId))
+  }
+
+  const updatedWeeklyPlan = await weeklyPlans.findByIdAndUpdate(id, weeklyPlan, {new: true})
    res.json(updatedWeeklyPlan) 
 };
 

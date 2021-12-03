@@ -3,8 +3,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv'
 
-//import weeklyPlans Route
+//import   Route
 import weeklyPlansRoutes from './routes/weeklyPlans.js';
+import userRoutes from './routes/users.js';
+
 
 //created the express app
 const app = express(); 
@@ -20,6 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/weeklyPlans', weeklyPlansRoutes);
+app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
