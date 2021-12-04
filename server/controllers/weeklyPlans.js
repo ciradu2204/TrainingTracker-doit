@@ -16,7 +16,6 @@ export const getWeeklyPlans = async (req, res) => {
 //Add a new weekly plan
 export const createWeeklyPlans = async (req, res) => {
   const weeklyPlan = req.body;
-  console.log(weeklyPlan)
   const newWeeklyPlan = new weeklyPlans({...weeklyPlan, creator: req.userId});
   console.log(newWeeklyPlan);
   try {

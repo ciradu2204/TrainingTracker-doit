@@ -11,6 +11,9 @@ export default makeStyles((theme) => {
       root: {
         display: "flex",
         justifyContent: "center",
+        '& .MuiAccordionSummary-root:hover, .MuiButtonBase-root:hover': {
+          cursor: 'default',
+        },
       },
       accordion: {
         margin: "20px 0"

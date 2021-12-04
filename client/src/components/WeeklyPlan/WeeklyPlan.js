@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Typography, IconButton } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import Grid from "@mui/material/Grid";
@@ -8,49 +8,42 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Icon } from "@iconify/react";
 import moment from "moment";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CircularProgress from "@mui/material/CircularProgress";
-import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import ListItemText from "@mui/material/ListItemText";
-import { Divider } from "@mui/material";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import { LinearProgress } from "@mui/material";
-import IosShareIcon from "@mui/icons-material/IosShare";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
-import { Menu } from "@mui/material";
-import { MenuItem } from "@mui/material";
 import { useDispatch } from "react-redux";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import Button from "@mui/material/Button";
+import DialogBox from "../Dialog/dialog";
 import {
   deleteWeeklyPlan,
   likeWeeklyPlan,
   markGoalComplete,
 } from "../../actions/weeklyPlans";
 
-import useStyles from "./style"
+import useStyles from "./style";
+import Share from "../Share/share";
+import Menu from "../Menu/menu";
 
 const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const classes = useStyles();
   const [expand, setExpand] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const dispatch = useDispatch();
-
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = React.useState(false);
+  const [openShareDialog, setOpenShareDialog] = React.useState(false);
+  const [shareUrl, setShareUrl] = React.useState("");
 
-  const handleViewMore = (event) => {
+  useEffect(() => {}, [anchorEl]);
+
+  const handleOpenViewMore = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (event) => {
+  const handleCloseViewMore = () => {
     setAnchorEl(null);
   };
 
@@ -60,11 +53,12 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
 
   const handleEdit = () => {
     setCurrentId(weeklyPlan._id);
-    handleClose();
+    handleCloseViewMore();
     handleBackdropOpen();
   };
   const handleClickOpenDialog = () => {
     setOpenDialog(true);
+    handleCloseViewMore();
   };
 
   const handleCloseDialog = () => {
@@ -78,6 +72,27 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
 
   const handleLike = () => {
     dispatch(likeWeeklyPlan(weeklyPlan._id));
+  };
+  const handleOpenShareDialog = () => {
+    setOpenShareDialog(true);
+  };
+
+  const generateUrl = () => {
+    const url = `http://localhost:3000/${weeklyPlan._id}`;
+
+    return url;
+  };
+
+  const handleShare = () => {
+    const url = generateUrl();
+    setShareUrl(url);
+    handleCloseViewMore();
+    handleOpenShareDialog();
+  };
+
+  const handleCloseShareDialog = () => {
+    setOpenShareDialog(false);
+    setShareUrl("");
   };
 
   const markAsDone = (goalId, goalIndex) => {
@@ -150,7 +165,9 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Grid>
               </Grid>
               <Grid item>
-                <Typography variant="body1">{weeklyPlan.description}</Typography>
+                <Typography variant="body1">
+                  {weeklyPlan.description}
+                </Typography>
               </Grid>
               <Grid
                 item
@@ -202,7 +219,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               container
               xs={1}
               md={1}
-              lg= {1}
+              lg={1}
               direction="column"
               justifyContent="space-between"
               alignItems="flex-end"
@@ -212,89 +229,13 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 <IconButton
                   arial-label="More"
                   onClick={(e) => {
-                    handleViewMore(e);
+                    handleOpenViewMore(e);
                   }}
                 >
-                  <Icon icon="mdi:dots-vertical" color="white" />
+                  <MoreVertIcon sx={{ color: "white", cursor: "pointer" }} />
                 </IconButton>
-                <Menu
-                  id="menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    "aria-labelledby": "edit-update-shareMenu",
-                  }}
-                >
-                  <MenuItem
-                    onClick={() => {
-                      handleClickOpenDialog();
-                    }}
-                  >
-                    <ListItemIcon>
-                      <DeleteOutlineOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText>Delete</ListItemText>
-                  </MenuItem>
-                  {/* Delete Dialog */}
-                  <Dialog
-                    open={openDialog}
-                    onClose={handleCloseDialog}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                  >
-                    <DialogTitle id="alert-dialog-title">
-                      {"Delete Weekly Plan"}
-                    </DialogTitle>
-                    <DialogContent>
-                      <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to delete this plan?
-                      </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button
-                        onClick={() => {
-                          handleCloseDialog();
-                        }}
-                      >
-                        No
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          handleDelete();
-                        }}
-                        autoFocus
-                      >
-                        Yes
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
-                  <Divider />
-                  <MenuItem
-                    onClick={() => {
-                      handleEdit();
-                    }}
-                  >
-                    <ListItemIcon>
-                      <ModeEditOutlineOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText>Modify</ListItemText>
-                  </MenuItem>
-
-                  <Divider />
-                  <MenuItem
-                    onClick={() => {
-                      handleClose();
-                    }}
-                  >
-                    <ListItemIcon>
-                      <IosShareIcon />
-                    </ListItemIcon>
-                    <ListItemText>Share</ListItemText>
-                    Share
-                  </MenuItem>
-                </Menu>
               </Grid>
+
               <Grid item>
                 <IconButton
                   arial-label="Expand Icon"
@@ -302,8 +243,36 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     toggleAcordion();
                   }}
                 >
-                  <ExpandMoreIcon sx={{ color: "white" }} />
+                  <ExpandMoreIcon sx={{ color: "white", cursor: "pointer" }} />
                 </IconButton>
+              </Grid>
+            </Grid>
+
+            <Grid item container>
+              <Grid item xs={12}>
+                <DialogBox
+                  openDialog={openDialog}
+                  handleCloseDialog={handleCloseDialog}
+                  handleDelete={handleDelete}
+                />
+              </Grid>
+              <Grid item xs={12} >
+                <Share
+                
+                  url={shareUrl}
+                  openShareDialog={openShareDialog}
+                  handleCloseShareDialog={handleCloseShareDialog}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={open}
+                  handleCloseViewMore={handleCloseViewMore}
+                  handleClickOpenDialog={handleClickOpenDialog}
+                  handleEdit={handleEdit}
+                  handleShare={handleShare}
+                />
               </Grid>
             </Grid>
           </Grid>
