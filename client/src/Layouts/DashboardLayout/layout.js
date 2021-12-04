@@ -1,4 +1,4 @@
-import React, { useState, window, useEffect } from "react";
+import React, { useState, window } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
@@ -23,29 +23,30 @@ import { Box } from "@mui/material";
 import useStyles from "./style"
 import { Outlet } from "react-router";
 import { useDispatch } from "react-redux";
- 
+import { useSelector } from "react-redux";
 const drawerWidth = 240;
 
 export default function Layout() {
   const classes = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
   const dispatch = useDispatch()
-
+  const location = useLocation();
+  const user = useSelector(state => state.auth)
+ console.log(user)
   const logout = () => {
     console.log("logingout");
      dispatch({type: 'LOGOUT'})
      navigate("/")
-     setUser(null);
+    //  setUser(null);
   }
 
+
+  // useEffect(() => {
+  //   // const token = user?.token; 
+  //    setUser(JSON.parse(localStorage.getItem('profile')))
+  //  }, [location])
  
-  useEffect(() => {
-   // const token = user?.token; 
-    setUser(JSON.parse(localStorage.getItem('profile')))
-  }, [location])
 
   
    const container =
@@ -142,7 +143,7 @@ export default function Layout() {
           </IconButton>
 
           <Typography variant="h7" noWrap component="div" sx={{ m: 2 }}>
-            {user.result.name}
+            {user.authData.result.name}
           </Typography>
 
           <IconButton
@@ -156,7 +157,7 @@ export default function Layout() {
             <KeyboardArrowDownIcon />
           </IconButton>
 
-           <Avatar className={classes.purple} alt={user.result.name} src={user.result.imageUrl}>{user.result.name.charAt(0)}</Avatar>
+           <Avatar className={classes.purple} alt={user.authData.result.name} src={user.authData.result.imageUrl}>{user.authData.result.name.charAt(0)}</Avatar>
         </Toolbar>
         <Divider />
       </AppBar>

@@ -20,7 +20,7 @@ const Form = ({
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const dispatch = useDispatch();
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+  const [user] = useState(JSON.parse(localStorage.getItem('profile')))
   const [weeklyPlanData, setweeklyPlanData] = useState({
     weeklyPlanName: "",
     startDate: null,

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import WeeklyPlan from "./WeeklyPlan/WeeklyPlan";
+import React, { useEffect, useState } from "react";
+import WeeklyPlan from "../../components/WeeklyPlan/WeeklyPlan";
 import Grid from "@mui/material/Grid";
 import {
   CircularProgress,
@@ -10,16 +10,25 @@ import {
   Divider,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import Form from "../Form/form";
+import Form from "../../components/Form/form";
 import moment from "moment";
 import EventIcon from "@mui/icons-material/Event";
 import useStyles from "./style"
+import { useDispatch } from "react-redux";
+import { getWeeklyPlans } from "../../actions/weeklyPlans";
 
-const WeeklyPlans = ({ setCurrentId, currentId }) => {
+const WeeklyPlans = () => {
   //States
   const weeklyPlans = useSelector((state) => state.weeklyPlans);
   const [open, setOpen] = useState(false);
   const classes = useStyles();
+
+  const dispatch = useDispatch();
+  const [currentId, setCurrentId] = useState(null);
+
+  useEffect(() => {
+    dispatch(getWeeklyPlans());
+  }, [currentId, dispatch]);
   //functions
   const handleClose = () => {
     setOpen(false);

@@ -33,7 +33,7 @@ import {
   deleteWeeklyPlan,
   likeWeeklyPlan,
   markGoalComplete,
-} from "../../../actions/weeklyPlans";
+} from "../../actions/weeklyPlans";
 
 import useStyles from "./style"
 

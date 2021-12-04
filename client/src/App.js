@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
-import WeeklyPlans from "./components/WeeklyPlans/WeeklyPlans.js";
-import DashboardLayout from "./components/Layouts/DashboardLayout/layout";
+import WeeklyPlans from "./pages/WeeklyPlans/WeeklyPlans.js";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { getWeeklyPlans } from "./actions/weeklyPlans";
-import AuthLayout from "./components/Layouts/AuthLayout/layout";
-import Login from "./components/Auth/Login/login";
-import Register from "./components/Auth/Register/register";
+import AuthLayout from "./Layouts/AuthLayout/layout";
+import Login from "./pages/Auth/Login/login";
+import PrivateRoute from "./components/privateRoute.js";
+import Register from "./pages/Auth/Register/register";
+import DashboardLayout from "./Layouts/DashboardLayout/layout";
 
 const theme = createTheme({
   palette: {
@@ -29,12 +28,6 @@ const theme = createTheme({
 });
 
 const App = () => {
-  const dispatch = useDispatch();
-  const [currentId, setCurrentId] = useState(null);
-
-  useEffect(() => {
-    dispatch(getWeeklyPlans());
-  }, [currentId, dispatch]);
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
@@ -45,15 +38,9 @@ const App = () => {
           </Route>
 
           <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route
-              path="weeklyPlans"
-              element={
-                <WeeklyPlans
-                  setCurrentId={setCurrentId}
-                  currentId={currentId}
-                />
-              }
-            />
+            <Route path="" element={<PrivateRoute/>}>
+              <Route path="weeklyPlans" element={<WeeklyPlans />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
