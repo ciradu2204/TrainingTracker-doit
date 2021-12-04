@@ -150,7 +150,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Grid>
               </Grid>
               <Grid item>
-                <Typography>{weeklyPlan.description}</Typography>
+                <Typography variant="body1">{weeklyPlan.description}</Typography>
               </Grid>
               <Grid
                 item
@@ -160,7 +160,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 alignItems="center"
               >
                 <Grid item xs={12} md={5}>
-                  <Typography>
+                  <Typography variant="overline">
                     Date: &nbsp;
                     {moment(weeklyPlan.startDate).format("MMM Do YYYY")} -{" "}
                     {moment(weeklyPlan.endDate).format("MMM Do YYYY")}
@@ -168,7 +168,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Grid>
 
                 <Grid item xs={12} md={3}>
-                  <Typography>
+                  <Typography variant="overline">
                     Completed: &nbsp; {weeklyPlan.completedGoals}/
                     {weeklyPlan.goals.length} done
                   </Typography>
@@ -189,11 +189,11 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     color="secondary"
                   />
 
-                  <Typography>
+                  <Typography variant="overline">
                     {" "}
                     &nbsp; {weeklyPlan.likeCount} &nbsp;{" "}
                   </Typography>
-                  <Typography>Likes </Typography>
+                  <Typography variant="overline">Likes </Typography>
                 </Grid>
               </Grid>
             </Grid>

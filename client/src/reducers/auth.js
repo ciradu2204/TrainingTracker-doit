@@ -4,9 +4,9 @@ import {
   LOGOUT,
   SIGNUPERROR,
 } from "../constants/actionTypes";
-
+const initialState = { authData: null, signUpErrors: null, signInErrors: null }
 const authReducer = (
-  state = { authData: null, signUpErrors: null, signInErrors: null },
+  state = initialState,
   action
 ) => {
   switch (action.type) {
@@ -15,7 +15,7 @@ const authReducer = (
       return { ...state, authData: action?.data };
     case LOGOUT:
       localStorage.clear();
-      return { ...state, authData: null };
+      return {...initialState };
     case SIGNINERROR:
       return { ...state, signUpErrors: null, signInErrors: action?.errorMessage.error };
     case SIGNUPERROR:

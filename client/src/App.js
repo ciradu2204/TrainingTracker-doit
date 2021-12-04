@@ -8,6 +8,8 @@ import Login from "./pages/Auth/Login/login";
 import PrivateRoute from "./components/privateRoute.js";
 import Register from "./pages/Auth/Register/register";
 import DashboardLayout from "./Layouts/DashboardLayout/layout";
+import NotFound from "./pages/NotFound/NotFound.js";
+import Overview from "./pages/Overview/overview"
 
 const theme = createTheme({
   palette: {
@@ -37,10 +39,14 @@ const App = () => {
             <Route path="register" element={<Register />} />
           </Route>
 
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route path="" element={<PrivateRoute/>}>
+          <Route path="/dashboard" element={<PrivateRoute/>}>
+            <Route path="" element={<DashboardLayout />}>
+            <Route path="overview" element={<Overview />} />
               <Route path="weeklyPlans" element={<WeeklyPlans />} />
             </Route>
+          </Route>
+
+          <Route path="*" element={<NotFound/>}>
           </Route>
         </Routes>
       </BrowserRouter>

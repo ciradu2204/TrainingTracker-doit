@@ -33,20 +33,11 @@ export default function Layout() {
   const dispatch = useDispatch()
   const location = useLocation();
   const user = useSelector(state => state.auth)
- console.log(user)
   const logout = () => {
-    console.log("logingout");
-     dispatch({type: 'LOGOUT'})
+    dispatch({type: 'LOGOUT'})
      navigate("/")
-    //  setUser(null);
-  }
-
-
-  // useEffect(() => {
-  //   // const token = user?.token; 
-  //    setUser(JSON.parse(localStorage.getItem('profile')))
-  //  }, [location])
- 
+   }
+  
 
   
    const container =
