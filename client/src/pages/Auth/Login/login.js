@@ -18,6 +18,7 @@ import {useNavigate} from "react-router-dom";
 import {signin} from '../../../actions/auth.js';
 import { useSelector } from "react-redux";
 import { Alert } from "@mui/material";
+import { useLocation } from 'react-router-dom'
 
 const Login = () => {
   const [formData, setformData] = React.useState({
@@ -27,10 +28,11 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {state} = useLocation()
 
   const handleSubmit = (e) =>{
       e.preventDefault()
-      dispatch((signin(formData, navigate)))
+      dispatch((signin(formData, navigate, state?.path)))
   }
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -56,7 +58,7 @@ const Login = () => {
     const token = res?.tokenId;
     try {
       dispatch({ type: "AUTH", data: { result, token } });
-      navigate("/dashboard/weeklyPlans")
+      navigate(state?.path || "/dashboard/overview")
     } catch (error) {
       console.log(error);
     }

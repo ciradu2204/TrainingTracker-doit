@@ -19,6 +19,9 @@ import { useNavigate } from "react-router-dom";
 import { signup } from "../../../actions/auth.js";
 import { useSelector } from "react-redux";
 import { Alert } from "@mui/material";
+import { useLocation } from 'react-router-dom'
+
+
 
 const Register = () => {
   const [formData, setformData] = React.useState({
@@ -37,6 +40,9 @@ const Register = () => {
   const [confirmPassword, setConfirmPasswordShow] = React.useState(false);
   const classes = useStyles();
   const auth = useSelector((state) => state.auth);
+  const {state} = useLocation()
+
+
 
   const handleChange = (prop) => (event) => {
     setformData({ ...formData, [prop]: event.target.value });
@@ -44,7 +50,7 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(signup(formData, navigate));
+    dispatch(signup(formData, navigate, state?.path));
     };
 
   const googleSuccess = async (res) => {
@@ -52,7 +58,7 @@ const Register = () => {
     const token = res?.tokenId;
     try {
       dispatch({ type: "AUTH", data: { result, token } });
-      navigate("/dashboard/weeklyPlans");
+      navigate(state?.path || "/dashboard/overview")
     } catch (error) {
       console.log(error);
     }

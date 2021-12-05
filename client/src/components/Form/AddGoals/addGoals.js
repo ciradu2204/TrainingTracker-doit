@@ -356,12 +356,12 @@ const AddGoal = ({
       <Box
         sx={{
           display: "flex",
-          mx: "10px",
-          my: "10px",
           height: "100%",
           alignItems: "end",
           justifyContent: "end",
-        }}
+          mx: "10px",
+          my: "10px",
+         }}
       >
         <Button disabled={activeStep === 0} onClick={prevStep}>
           Back

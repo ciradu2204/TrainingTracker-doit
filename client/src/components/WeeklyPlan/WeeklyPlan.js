@@ -15,8 +15,8 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 import { useDispatch } from "react-redux";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import DialogBox from "../Dialog/dialog";
+ import DialogBox from "../Dialog/dialog";
+import { useSelector } from "react-redux";
 import {
   deleteWeeklyPlan,
   likeWeeklyPlan,
@@ -26,6 +26,8 @@ import {
 import useStyles from "./style";
 import Share from "../Share/share";
 import Menu from "../Menu/menu";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 
 const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const classes = useStyles();
@@ -36,6 +38,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [openShareDialog, setOpenShareDialog] = React.useState(false);
   const [shareUrl, setShareUrl] = React.useState("");
+  const user = useSelector((state) => state.auth);
 
   useEffect(() => {}, [anchorEl]);
 
@@ -78,8 +81,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   };
 
   const generateUrl = () => {
-    const url = `http://localhost:3000/${weeklyPlan._id}`;
-
+    const url = `http://localhost:3000/dashboard/${weeklyPlan._id}/shared`;
     return url;
   };
 
@@ -105,6 +107,42 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
     let value = current / target;
     let roundedNumber = value.toFixed(1);
     return roundedNumber * 100;
+  };
+
+  const Like = () => {
+    if (weeklyPlan.likes.length > 0) {
+      return weeklyPlan.likes.find(
+        (like) => like === (user?.result?.googleId || user?.result?._id)
+      ) ? (
+        <>
+          <ThumbUpAltIcon fontSize="small" />
+          &nbsp;{weeklyPlan.likes.length > 2}?{" "}
+          <Typography variant="body2">
+            `You and ${weeklyPlan.likes.length - 1} others`
+          </Typography>{" "}
+          :{" "}
+          <Typography variant="body2">
+            `${weeklyPlan.likes.length} like$
+            {weeklyPlan.like.length > 1 ? "s" : ""}`
+          </Typography>
+        </>
+      ) : (
+        <>
+          <ThumbUpAltOutlinedIcon fontSize="small" />
+          &nbsp;{weeklyPlan.likes.length}
+          <Typography variant="body2">
+            {weeklyPlan.likes.length > 1 ? "Likes" : "Like"}
+          </Typography>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <ThumbUpAltOutlinedIcon fontSize="small" />
+        &nbsp;<Typography variant="body2">Like</Typography>
+      </>
+    );
   };
 
   return (
@@ -158,10 +196,25 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 justifyContent="space-between"
                 alignItems="baseline"
               >
-                <Grid item>
-                  <Typography variant="h6">
-                    {weeklyPlan.weeklyPlanName}
-                  </Typography>
+                <Grid
+                  item
+                  container
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="baseline"
+                >
+                  <Grid item>
+                    <Typography variant="h6">
+                      {weeklyPlan.weeklyPlanName}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    {weeklyPlan.creator !== (user.authData.result._id || user.authData.result.googleId) ? (
+                      <Typography variant="body2">
+                        Creator: {weeklyPlan.userName}
+                      </Typography>
+                    ) : null}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item>
@@ -177,7 +230,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 alignItems="center"
               >
                 <Grid item xs={12} md={5}>
-                  <Typography variant="overline">
+                  <Typography variant="body2">
                     Date: &nbsp;
                     {moment(weeklyPlan.startDate).format("MMM Do YYYY")} -{" "}
                     {moment(weeklyPlan.endDate).format("MMM Do YYYY")}
@@ -185,7 +238,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                 </Grid>
 
                 <Grid item xs={12} md={3}>
-                  <Typography variant="overline">
+                  <Typography variant="body2">
                     Completed: &nbsp; {weeklyPlan.completedGoals}/
                     {weeklyPlan.goals.length} done
                   </Typography>
@@ -199,18 +252,20 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                   direction="row"
                   alignItems="center"
                 >
-                  <FavoriteBorderIcon
+                  <IconButton
                     onClick={() => {
                       handleLike();
                     }}
-                    color="secondary"
-                  />
-
-                  <Typography variant="overline">
-                    {" "}
-                    &nbsp; {weeklyPlan.likeCount} &nbsp;{" "}
-                  </Typography>
-                  <Typography variant="overline">Likes </Typography>
+                    sx={{
+                      color: "white",
+                      "&:hover": {
+                        background: "none",
+                      },
+                      cursor: "pointer !important"
+                    }}
+                  >
+                    <Like />
+                  </IconButton>
                 </Grid>
               </Grid>
             </Grid>
@@ -226,14 +281,16 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               sx={{ width: "100%", height: "100%" }}
             >
               <Grid item>
-                <IconButton
-                  arial-label="More"
-                  onClick={(e) => {
-                    handleOpenViewMore(e);
-                  }}
-                >
-                  <MoreVertIcon sx={{ color: "white", cursor: "pointer" }} />
-                </IconButton>
+                {weeklyPlan.creator === (user.authData.result._id || user.authData.result.googleId)? (
+                  <IconButton
+                    arial-label="More"
+                    onClick={(e) => {
+                      handleOpenViewMore(e);
+                    }}
+                  >
+                    <MoreVertIcon sx={{ color: "white", cursor: "pointer" }} />
+                  </IconButton>
+                ) : null}
               </Grid>
 
               <Grid item>
@@ -256,9 +313,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                   handleDelete={handleDelete}
                 />
               </Grid>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <Share
-                
                   url={shareUrl}
                   openShareDialog={openShareDialog}
                   handleCloseShareDialog={handleCloseShareDialog}
@@ -287,23 +343,25 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               direction="row"
             >
               <Grid item xs={2} md={1} alignSelf="center">
-                <Box
-                  disabled={goal.completed ? true : false}
-                  className={classes.checkBoxParent}
-                  onClick={() => {
-                    markAsDone(goal._id, index);
-                  }}
-                >
-                  <IconButton
-                    className={
-                      goal.target.value === goal.achieved.value
-                        ? classes.checkBox
-                        : classes.checkBoxNone
-                    }
+                {weeklyPlan.creator === (user.authData.result._id || user.authData.result.googleId) ? (
+                  <Box
+                    disabled={goal.completed ? true : false}
+                    className={classes.checkBoxParent}
+                    onClick={() => {
+                      markAsDone(goal._id, index);
+                    }}
                   >
-                    <CheckSharpIcon />
-                  </IconButton>
-                </Box>
+                    <IconButton
+                      className={
+                        goal.target.value === goal.achieved.value
+                          ? classes.checkBox
+                          : classes.checkBoxNone
+                      }
+                    >
+                      <CheckSharpIcon />
+                    </IconButton>
+                  </Box>
+                ) : null}
               </Grid>
               <Grid item xs={10} md={11}>
                 <Card className={classes.card} sx={{ borderRadius: "15px" }}>

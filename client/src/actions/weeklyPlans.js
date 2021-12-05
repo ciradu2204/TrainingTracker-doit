@@ -1,5 +1,5 @@
 import * as api from '../api';
-import { FETCH_ALL, DELETE, UPDATE, CREATE } from '../constants/actionTypes';
+import { FETCH_MYPLANS, DELETE, UPDATE, CREATE, UPDATE_OTHERS, FETCH_SHAREDPLAN, FETCH_ALLSHAREDPLANS } from '../constants/actionTypes';
 
 //action creators
 
@@ -7,7 +7,7 @@ export const  getWeeklyPlans = () => async(dispatch) =>{
 
     try {
         const {data}  = await api.fetchWeeklyPlans();
-        dispatch({type:FETCH_ALL, payload: data}) 
+        dispatch({type:FETCH_MYPLANS, payload: data}) 
     }catch (error){
         console.log(error)
     }
@@ -68,5 +68,39 @@ export const markGoalComplete = (id, goalId, goalIndex) => async(dispatch) => {
         dispatch({type: UPDATE, payload: data})
     }catch(error){
         console.log(error)
+    }
+}
+
+
+
+export const addsharedWeeklyPlan = (id) => async(dispatch) => {
+
+    try{
+
+        const {data} = await api.addsharedWeeklyPlan(id)
+        dispatch({type: UPDATE_OTHERS, data })
+
+    }catch(error){
+        console.log(error)
+    }
+
+}
+
+export const getSharedWeeklyPlan = (id) => async(dispatch) => {
+
+    try{
+     const {data} = await api.fetchSharedWeeklyPlan(id)
+     dispatch({type: FETCH_SHAREDPLAN, data})
+    }catch(error){
+        console.log({error})
+    }
+}
+
+export const getAllSharedWeeklyPlanPerUser = () => async(dispatch) => {
+    try{
+         const {data} = await api.fetchAllSharedPlansByUser()
+        dispatch({type: FETCH_ALLSHAREDPLANS, payload: data})
+    }catch(error){
+     console.log({error})
     }
 }

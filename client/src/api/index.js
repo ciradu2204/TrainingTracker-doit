@@ -27,6 +27,12 @@ export const likeWeeklyPlan = (id) => API.patch(`/weeklyPlan/${id}/likeWeeklyPla
 
 export const markGoalComplete = (id, goalId, goalIndex) => API.patch(`/weeklyPlan/${id}/${goalId}/${goalIndex}/markGoalComplete`);
 
+export const addsharedWeeklyPlan = (id) => API.patch(`/weeklyPlan/${id}/addsharedWeeklyPlan`)
+
+export const fetchSharedWeeklyPlan = (id) => API.get(`/weeklyPlan/${id}/fetchSharedPlan`)
+
+export const fetchAllSharedPlansByUser = () => API.get('/weeklyPlan/fetchAllSharedPlans')
+
 export const signIn = (formData)  => API.post('/user/signin', formData);
 
 export const signUp = (formData) => API.post('/user/signup', formData);

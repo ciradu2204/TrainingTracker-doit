@@ -16,7 +16,7 @@ export default makeStyles((theme) => {
         },
       },
       accordion: {
-        margin: "20px 0"
+        margin: "20px 0",
        },
       circularProgressBox: {
         [theme.breakpoints.up("xs")]: {

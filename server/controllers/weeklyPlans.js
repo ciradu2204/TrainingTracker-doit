@@ -13,12 +13,39 @@ export const getWeeklyPlans = async (req, res) => {
   }
 };
 
+export const getWeeklyPlan = async (req, res) => {
+  const {id} = req.params
+  try{
+    //check if the id is valid
+  if (!mongoose.Types.ObjectId.isValid(id))
+  return res.status(404).send("No Weekly Plan with that id");
+
+   const weeklyPlan = await weeklyPlans.find({_id: id})
+   res.status(200).json(weeklyPlan)
+  }catch(error){
+      res.status(404).json({message: error.message})
+  }
+}
+
+export const getAllSharedWeeklyPlan = async(req, res) => {
+
+   try{
+    //find a weekly plan which has the user id as part of the usersWithAccess array
+     const weeklyPlansResponse = await weeklyPlans.find({usersWithAccess: {$in: [req.userId]}})
+    res.status(200).json(weeklyPlansResponse)
+  }catch(error){
+    res.status(404).json({message: error.message})
+  }
+  
+
+}
+
+
 //Add a new weekly plan
 export const createWeeklyPlans = async (req, res) => {
   const weeklyPlan = req.body;
   const newWeeklyPlan = new weeklyPlans({...weeklyPlan, creator: req.userId});
-  console.log(newWeeklyPlan);
-  try {
+   try {
     await newWeeklyPlan.save();
     
     //201 as the object is created and only its reference is returned
@@ -70,7 +97,7 @@ export const likeWeeklyPlan = async (req, res) => {
 
   const weeklyPlan = await weeklyPlans.findById(id)
 
-  const index = weeklyPlan.likes.findBYIndex((id) => id === String(req.userId))
+  const index = weeklyPlan.likes.findIndex((id) => id === String(req.userId))
 
   if(index === -1 ){
     // A user can like the plan 
@@ -95,3 +122,25 @@ export const markGoalComplete = async(req, res) => {
 
   res.json(updatedWeeklyPlan)
 }
+
+export const shareWeeklyPlan = async(req, res) => {
+
+  const {id } = req.params
+
+  //find the weeklyplan by id 
+  const weeklyPlan = await weeklyPlans.find({_id:id });
+ 
+  if(!weeklyPlan) return res.status(404).message("No weekly plan with that id")
+  // check to see if the creator is not the same as the user id 
+
+  if(weeklyPlan.creator === req.userId){
+   return  res.status(400).message("You are the creator of the shared weekly plan")
+  }
+
+  const updatedWeeklyPlan = await weeklyPlans.findOneAndUpdate({_id: id}, {$push: {usersWithAccess: req.userId }})
+  // if not then add the userId to the user having access to the plan
+
+  res.json(updatedWeeklyPlan)
+}
+
+

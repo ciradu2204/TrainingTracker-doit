@@ -42,8 +42,8 @@ const Form = ({
   });
 
   //Fetching a weeklyPlan of the currentId
-  const weeklyPlan = useSelector((state) =>
-    currentId ? state.weeklyPlans.find((wp) => wp._id === currentId) : null
+  const myWeeklyPlan = useSelector((state) =>
+    currentId ? state.weeklyPlans.myWeeklyPlans.find((wp) => wp._id === currentId) : null
   );
   // provide the different steps
   const getSteps = () => {
@@ -51,10 +51,10 @@ const Form = ({
   };
 
   useEffect(() => {
-    if (weeklyPlan) {
-      setweeklyPlanData({ ...weeklyPlan });
+    if (myWeeklyPlan) {
+      setweeklyPlanData({ ...myWeeklyPlan });
     }
-  }, [weeklyPlan]);
+  }, [myWeeklyPlan]);
 
   const steps = getSteps();
 
