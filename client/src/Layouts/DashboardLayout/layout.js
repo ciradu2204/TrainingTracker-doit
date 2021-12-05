@@ -1,4 +1,4 @@
-import React, { useState, window } from "react";
+import React, { useState, window, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
@@ -6,17 +6,12 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+ import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
+ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AppBar from "@mui/material/AppBar";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import Toolbar from "@mui/material/Toolbar";
+  import Toolbar from "@mui/material/Toolbar";
 import MenuIcon from "@mui/icons-material/Menu";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import IconButton from "@mui/material/IconButton";
+ import IconButton from "@mui/material/IconButton";
 import { Avatar, Divider } from "@mui/material";
 import moment from "moment";
 import { Box } from "@mui/material";
@@ -24,19 +19,40 @@ import useStyles from "./style"
 import { Outlet } from "react-router";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import decode from "jwt-decode"
+import { useCallback } from 'react'
 const drawerWidth = 240;
 
 export default function Layout() {
   const classes = useStyles();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const location = useLocation();
   const user = useSelector(state => state.auth)
-  const logout = () => {
+
+  const logout = useCallback(() => {
     dispatch({type: 'LOGOUT'})
      navigate("/")
-   }
+   }, [dispatch, navigate])
+
+   //check if the user token has expired 
+
+   useEffect(() => {
+   
+    const token = user.authData?.token
+
+    if(token){
+      const decodedToken = decode(token)
+
+      if(decodedToken.exp * 1000 < new Date().getTime()){
+        logout()
+      } 
+    }
+
+        
+   }, [location, user, dispatch, navigate, logout])
+
   
 
   
@@ -44,19 +60,9 @@ export default function Layout() {
     window !== undefined ? () => window().document.body : undefined;
   const menuItems = [
     {
-      text: "Overview",
-      icon: <HomeOutlinedIcon color="primary" />,
-      path: "/dashboard/overview",
-    },
-    {
-      text: "My weekly plans",
+      text: "Weekly plans",
       icon: <ListAltOutlinedIcon color="primary" />,
       path: "/dashboard/weeklyPlans",
-    },
-    {
-      text: "Settings",
-      icon: <SettingsOutlinedIcon color="primary" />,
-      path: "/dashboard/settings",
     },
     {
       text: "Logout",
@@ -119,34 +125,13 @@ export default function Layout() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h7" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {moment().format("MMM Do YYYY, ddd")}
+            {moment().format("MMM Do YYYY, dddd")}
           </Typography>
 
-          <IconButton
-            size="large"
-            aria-label="show 17 new notifications"
-            edge="end"
-            className={classes.clickableButton}
-          >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
 
           <Typography variant="h7" noWrap component="div" sx={{ m: 2 }}>
             {user.authData.result.name}
           </Typography>
-
-          <IconButton
-            color="inherit"
-            size="large"
-            sx={{ ml: -3 }}
-            aria-haspopup="true"
-            aria-label="Modify current user account"
-            className={classes.clickableButton}
-          >
-            <KeyboardArrowDownIcon />
-          </IconButton>
 
            <Avatar className={classes.purple} alt={user.authData.result.name} src={user.authData.result.imageUrl}>{user.authData.result.name.charAt(0)}</Avatar>
         </Toolbar>

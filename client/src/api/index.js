@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API = axios.create({baseURL: 'http://localhost:5000' })
+const API = axios.create({baseURL: 'https://trainingtracker-doit.herokuapp.com' })
 
 //pass the user token to the backend 
 

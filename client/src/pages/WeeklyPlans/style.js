@@ -43,5 +43,8 @@ export default makeStyles((theme) => {
         justifyContent: "center",
         alignItems: "center",
       },
+      dialog: {
+         borderRadius: "15px"
+      }
     };
   });

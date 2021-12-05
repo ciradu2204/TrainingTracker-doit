@@ -58,7 +58,7 @@ const Login = () => {
     const token = res?.tokenId;
     try {
       dispatch({ type: "AUTH", data: { result, token } });
-      navigate(state?.path || "/dashboard/overview")
+      navigate(state?.path || "/dashboard/weeklyPlans")
     } catch (error) {
       console.log(error);
     }

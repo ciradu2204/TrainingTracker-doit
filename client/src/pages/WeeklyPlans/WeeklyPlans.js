@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import WeeklyPlan from "../../components/WeeklyPlan/WeeklyPlan";
 import Grid from "@mui/material/Grid";
 import {
@@ -18,6 +18,11 @@ import useStyles from "./style";
 import { InputLabel } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { Select } from "@mui/material";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const WeeklyPlans = ({
   handleToggle,
@@ -30,6 +35,8 @@ const WeeklyPlans = ({
   const { myWeeklyPlans, othersWeeklyPlans } = useSelector(
     (state) => state.weeklyPlans
   );
+  const user = useSelector((state) => state.auth);
+  const [openCreateDialog, setOpenCreateDialog] = useState(true)
   const classes = useStyles();
   const [createdBy, setCreatedBy] = useState("me");
 
@@ -51,9 +58,34 @@ const WeeklyPlans = ({
     }
   };
 
-  //create a select button
-  //control the value
-  // if(value is createdby others) fetch othersweeklyPlan else fetchmyplans
+  
+  const handleClickOpenDialog = () => {
+    setOpenCreateDialog(true);
+  };
+
+  useEffect(() => {
+    const isTrue =   myWeeklyPlans.filter((weeklyPlan) =>
+              findPeriod(weeklyPlan.startDate, "week")
+            ).length > 0
+        if(!isTrue && !open){
+          handleClickOpenDialog()
+        }
+  }, [myWeeklyPlans, open])
+
+  
+
+  const handleCloseDialog = () => {
+    setOpenCreateDialog(false);
+  };
+
+
+ 
+
+  const handleCreatePlan = () => {
+    handleCloseDialog()
+    handleToggle()
+  }
+
   return (
     <>
       <Grid
@@ -153,19 +185,59 @@ const WeeklyPlans = ({
                   />
                 ))
             ) : (
-              <Grid
-                item
-                container
-                direction="column"
-                className={classes.typographyNoPlans}
-              >
-                <Grid item>
-                  <EventIcon sx={{ fontSize: 40 }} />
-                </Grid>
-                <Grid item>
-                  <Typography>No current plans</Typography>
-                </Grid>
-              </Grid>
+              <>
+              <Dialog
+              open={openCreateDialog}
+              onClose={handleCloseDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+              className = {classes.dialog}
+            >
+              {!myWeeklyPlans.length > 0?(
+                <>
+                <DialogTitle id="alert-dialog-title">
+                 Welcome to .doit, {user.authData.result.name}
+              </DialogTitle>
+              <DialogContent>
+              
+                <DialogContentText id="alert-dialog-description">
+                As doit, we help you keep track of your weekly exercise goals. To get started, first create your weekly plan.
+                </DialogContentText>
+              </DialogContent>
+              </>
+              ):(
+              <>
+              <DialogTitle id="alert-dialog-title">
+              Hello {user.authData.result.name}
+             </DialogTitle>
+             <DialogContent>
+             
+               <DialogContentText id="alert-dialog-description">
+                It looks like you don't have any plan currently, please create one
+               </DialogContentText>
+             </DialogContent>
+             </>
+              )}
+              <DialogActions>
+                <Button onClick={handleCreatePlan} variant="contained" autoFocus>
+                  Create Plan
+                </Button>
+              </DialogActions>
+            </Dialog>
+             <Grid
+             item
+             container
+             direction="column"
+             className={classes.typographyNoPlans}
+           >
+             <Grid item>
+               <EventIcon sx={{ fontSize: 40 }} />
+             </Grid>
+             <Grid item>
+               <Typography>No current plans</Typography>
+             </Grid>
+           </Grid>
+            </>
             )}
           </Grid>
         </Grid>

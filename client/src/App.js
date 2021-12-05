@@ -9,7 +9,6 @@ import PrivateRoute from "./components/PrivateRoutes/privateRoute";
  import Register from "./pages/Auth/Register/register";
 import DashboardLayout from "./Layouts/DashboardLayout/layout";
 import NotFound from "./pages/NotFound/NotFound.js";
-import Overview from "./pages/Overview/overview"
 import Share from "./pages/Share/share.js";
 import { useDispatch } from "react-redux";
 import { getAllSharedWeeklyPlanPerUser, getWeeklyPlans } from "./actions/weeklyPlans";
@@ -35,8 +34,6 @@ const theme = createTheme({
 
 
 const App = () => {
-
-
 const dispatch = useDispatch();
 const [currentId, setCurrentId] = useState(null);
 const [open, setOpen] = useState(false);
@@ -68,8 +65,7 @@ useEffect(() => {
 
           <Route path="/dashboard" element={<PrivateRoute/>}>
             <Route path="" element={<DashboardLayout />}>
-            <Route path="overview" element={<Overview />} />
-            <Route path="weeklyPlans" element={<WeeklyPlans handleClose={handleClose} handleToggle={handleToggle} currentId={currentId} setCurrentId={setCurrentId} open={open}/>} />
+             <Route path="weeklyPlans" element={<WeeklyPlans handleClose={handleClose} handleToggle={handleToggle} currentId={currentId} setCurrentId={setCurrentId} open={open}/>} />
             <Route path=":id/shared" element={<Share handleBackdropOpen={handleClose} setCurrentId={setCurrentId}/>}/>
             </Route>
           </Route>
