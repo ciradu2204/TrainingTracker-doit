@@ -113,15 +113,19 @@ A guide on how to start the application.
    npm start 
    ```
 5. Open a new terminal on the side to run the server
-6. npm install the dependencies in package.json 
+6. cd the server folder
+   ```sh 
+   cd server 
+   ```
+8. npm install the dependencies in package.json 
      ```sh 
    npm install 
    ```
-7. Start server
+8. Start server
    ```sh
    npm start
    ```
-8. Check your browser, you should now be able to access the app. 
+9. Check your browser, you should now be able to access the app. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
