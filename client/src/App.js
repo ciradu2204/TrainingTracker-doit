@@ -47,6 +47,7 @@ const handleToggle = () => {
 };
 
 useEffect(() => {
+  console.log("yess")
   dispatch(getWeeklyPlans());
   dispatch(getAllSharedWeeklyPlanPerUser())
 }, [currentId, dispatch]);
