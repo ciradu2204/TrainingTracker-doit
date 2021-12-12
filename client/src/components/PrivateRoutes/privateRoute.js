@@ -14,8 +14,9 @@ function PrivateRoute() {
 
   //update the auth state once reload 
    useEffect(() => {
-    if(user.authData === null){
+    if(user.authData === null && localStorage.getItem("profile") != null){
       dispatch({ type: "RELOAD" });  
+      navigate(-1)
      }
   
    }, [user, dispatch, navigate]);
