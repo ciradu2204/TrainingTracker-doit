@@ -1,12 +1,15 @@
 import * as api from '../api';
-import { FETCH_MYPLANS, DELETE, UPDATE, CREATE, UPDATE_OTHERS, FETCH_SHAREDPLAN, FETCH_ALLSHAREDPLANS } from '../constants/actionTypes';
+import { FETCH_MYPLANS, DELETE, UPDATE, CREATE, UPDATE_OTHERS, FETCH_SHAREDPLAN, FETCH_ALLSHAREDPLANS, LOADING, LOADED } from '../constants/actionTypes';
 
 //action creators
 
 export const  getWeeklyPlans = () => async(dispatch) =>{
 
     try {
+        dispatch({type: LOADING})
         const {data}  = await api.fetchWeeklyPlans();
+        dispatch({type: LOADED})
+
         dispatch({type:FETCH_MYPLANS, payload: data}) 
     }catch (error){
         console.log(error)
@@ -89,7 +92,9 @@ export const addsharedWeeklyPlan = (id) => async(dispatch) => {
 export const getSharedWeeklyPlan = (id) => async(dispatch) => {
 
     try{
-     const {data} = await api.fetchSharedWeeklyPlan(id)
+    dispatch({type: LOADING})
+    const {data} = await api.fetchSharedWeeklyPlan(id)
+    dispatch({type: LOADED})
      dispatch({type: FETCH_SHAREDPLAN, data})
     }catch(error){
         console.log({error})
@@ -98,7 +103,9 @@ export const getSharedWeeklyPlan = (id) => async(dispatch) => {
 
 export const getAllSharedWeeklyPlanPerUser = () => async(dispatch) => {
     try{
-         const {data} = await api.fetchAllSharedPlansByUser()
+        dispatch({type: LOADING})
+        const {data} = await api.fetchAllSharedPlansByUser()
+         dispatch({type: LOADED})
         dispatch({type: FETCH_ALLSHAREDPLANS, payload: data})
     }catch(error){
      console.log({error})

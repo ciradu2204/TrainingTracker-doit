@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+//the backend is already deployed on Heroku incase you want to test it locally. Use localhost:5000
 const API = axios.create({baseURL: 'https://trainingtracker-doit.herokuapp.com' })
 
 //pass the user token to the backend 

@@ -2,9 +2,10 @@
 
 # dependencies
 **/node_modules/
+**/build 
+**/.netlify/
 /.pnp
 .pnp.js
-
 # testing
 /coverage
 
@@ -12,6 +13,7 @@
 /build
 
 # misc
+
 .DS_Store
 .env.local
 .env.development.local

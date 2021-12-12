@@ -15,7 +15,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CheckSharpIcon from "@mui/icons-material/CheckSharp";
 import { useDispatch } from "react-redux";
- import DialogBox from "../Dialog/dialog";
+import DialogBox from "../Dialog/dialog";
 import { useSelector } from "react-redux";
 import {
   deleteWeeklyPlan,
@@ -81,7 +81,11 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   };
 
   const generateUrl = () => {
-    const url = `http://localhost:3000/dashboard/${weeklyPlan._id}/shared`;
+    let currentUrl = window.location.href;
+    let startIndex = currentUrl.indexOf("//");
+    let endIndex = currentUrl.indexOf("/", startIndex + 2);
+    let domainName = currentUrl.substring(0, endIndex);
+    const url = `${domainName}/dashboard/shared/${weeklyPlan._id}`;
     return url;
   };
 
@@ -98,8 +102,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
   };
 
   const markAsDone = (goalId, goalIndex) => {
-    if (!weeklyPlan.goals[goalIndex].completed) {
-      dispatch(markGoalComplete(weeklyPlan._id, goalId, goalIndex));
+     if (!weeklyPlan.goals[goalIndex].completed) {
+       dispatch(markGoalComplete(weeklyPlan._id, goalId, goalIndex));
     }
   };
 
@@ -128,7 +132,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
         </>
       ) : (
         <>
-          <ThumbUpAltOutlinedIcon fontSize="small" />
+          <ThumbUpAltIcon fontSize="small" />
           &nbsp;{weeklyPlan.likes.length}
           <Typography variant="body2">
             {weeklyPlan.likes.length > 1 ? "Likes" : "Like"}
@@ -209,7 +213,9 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                     </Typography>
                   </Grid>
                   <Grid item>
-                    {weeklyPlan.creator !== (user.authData.result._id || user.authData.result.googleId) ? (
+                    {weeklyPlan.creator !==
+                    (user.authData.result._id ||
+                      user.authData.result.googleId) ? (
                       <Typography variant="body2">
                         Creator: {weeklyPlan.userName}
                       </Typography>
@@ -261,7 +267,7 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
                       "&:hover": {
                         background: "none",
                       },
-                      cursor: "pointer !important"
+                      cursor: "pointer !important",
                     }}
                   >
                     <Like />
@@ -281,7 +287,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               sx={{ width: "100%", height: "100%" }}
             >
               <Grid item>
-                {weeklyPlan.creator === (user.authData.result._id || user.authData.result.googleId)? (
+                {weeklyPlan.creator ===
+                (user.authData.result._id || user.authData.result.googleId) ? (
                   <IconButton
                     arial-label="More"
                     onClick={(e) => {
@@ -343,7 +350,8 @@ const WeeklyPlan = ({ weeklyPlan, setCurrentId, handleBackdropOpen }) => {
               direction="row"
             >
               <Grid item xs={2} md={1} alignSelf="center">
-                {weeklyPlan.creator === (user.authData.result._id || user.authData.result.googleId) ? (
+                {weeklyPlan.creator ===
+                (user.authData.result._id || user.authData.result.googleId) ? (
                   <Box
                     disabled={goal.completed ? true : false}
                     className={classes.checkBoxParent}

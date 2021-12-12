@@ -1,8 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 
-import {FETCH_MYPLANS, CREATE, UPDATE, DELETE, FETCH_SHAREDPLAN, FETCH_ALLSHAREDPLANS, UPDATE_OTHERS} from '../constants/actionTypes'
+import {FETCH_MYPLANS, CREATE, UPDATE, DELETE, FETCH_SHAREDPLAN, FETCH_ALLSHAREDPLANS, UPDATE_OTHERS, RESET, LOADING, LOADED} from '../constants/actionTypes'
 
-export default (state={myWeeklyPlans:[], othersWeeklyPlans:[], sharedPlan: null}, action) => {
+export default (state={myWeeklyPlans:[], othersWeeklyPlans:[], sharedPlan: null, loading: false}, action) => {
 
     switch(action.type){
         case FETCH_MYPLANS:
@@ -19,6 +19,12 @@ export default (state={myWeeklyPlans:[], othersWeeklyPlans:[], sharedPlan: null}
           return {...state, othersWeeklyPlans: [...state.othersWeeklyPlans.map((otherWeeklyPlan) => otherWeeklyPlan._id === action?.data? action.data: otherWeeklyPlan )]}
         case FETCH_ALLSHAREDPLANS: 
           return {...state, othersWeeklyPlans:[...action.payload] }
+        case RESET: 
+          return {myWeeklyPlans:[], othersWeeklyPlans: [], sharedPlan: null}
+        case LOADING: 
+          return {...state, loading: true}
+        case LOADED: 
+           return {...state, loading: false}
         default:
             return state
     }

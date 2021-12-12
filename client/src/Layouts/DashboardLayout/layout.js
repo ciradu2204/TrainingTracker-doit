@@ -33,6 +33,7 @@ export default function Layout() {
 
   const logout = useCallback(() => {
     dispatch({type: 'LOGOUT'})
+    dispatch({type: 'RESET'})
      navigate("/")
    }, [dispatch, navigate])
 

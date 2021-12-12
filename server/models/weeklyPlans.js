@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+//shema
 const weeklyPlansSchema = mongoose.Schema({
   weeklyPlanName: String,
   startDate: {
