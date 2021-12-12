@@ -20,8 +20,10 @@ export const  getWeeklyPlans = () => async(dispatch) =>{
 export const createWeeklyPlans = (weeklyPlan) => async(dispatch) => {
 
     try {
-    
-        const {data} = await api.createWeeklyPlan(weeklyPlan); 
+        dispatch({type: LOADING})
+        const {data} = await api.createWeeklyPlan(weeklyPlan);
+        dispatch({type: LOADED})
+ 
          dispatch({type: CREATE, payload: data})
     }catch (error){
         console.log(error)
@@ -33,7 +35,6 @@ export const updateWeeklyPlan = (id, weeklyPlan) => async(dispatch) => {
 
     try{
         const {data}  = await api.updateWeeklyPlan(id, weeklyPlan); 
-
         dispatch({type: UPDATE, payload: data })
     }catch(error){
         console.log(error)
@@ -44,7 +45,9 @@ export const updateWeeklyPlan = (id, weeklyPlan) => async(dispatch) => {
 export const deleteWeeklyPlan = (id) => async(dispatch) => {
     
     try{
+        dispatch({type: LOADING})
         await api.deleteWeeklyPlan(id)
+        dispatch({type: LOADED})
 
         dispatch({type: DELETE, payload:id})
 
@@ -79,8 +82,9 @@ export const markGoalComplete = (id, goalId, goalIndex) => async(dispatch) => {
 export const addsharedWeeklyPlan = (id) => async(dispatch) => {
 
     try{
-
+        dispatch({type: LOADING})
         const {data} = await api.addsharedWeeklyPlan(id)
+        dispatch({type: LOADED})
         dispatch({type: UPDATE_OTHERS, data })
 
     }catch(error){

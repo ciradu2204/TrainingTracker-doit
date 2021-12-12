@@ -16,8 +16,7 @@ function PrivateRoute() {
    useEffect(() => {
     if(user.authData === null){
       dispatch({ type: "RELOAD" });  
-      navigate(-1);
-    }
+     }
   
    }, [user, dispatch, navigate]);
 
