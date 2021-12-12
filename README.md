@@ -14,7 +14,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/ciradu2204/TrainingTracker-doit">
-    <img src="readmeImages/logo.png" alt="Logo" width="80" height="80">
+    <img src="Images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">TrainingTracker-.doit</h3>
@@ -194,4 +194,4 @@ Project Link: [https://github.com/ciradu2204/TrainingTracker-doit](https://githu
 [license-url]: https://github.com/ciradu2204/TrainingTracker-doit/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/ciradu2204
-[product-screenshot]: readmeImages/product-screenshot.png
+[product-screenshot]: Images/product-screenshot.png
